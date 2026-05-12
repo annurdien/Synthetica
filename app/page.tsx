@@ -46,6 +46,7 @@ export default function Page() {
   const [libraryTab, setLibraryTab] = useState<LibraryTab>('projects');
   const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [timelineZoom, setTimelineZoom] = useState(1);
+  const [previewingClipId, setPreviewingClipId] = useState<string | null>(null);
 
   const [tracks, setTracks] = useState<Track[]>(() => PROJECT_PRESETS[0].tracks.map((track) => ({ ...track })));
 
@@ -133,6 +134,15 @@ export default function Page() {
 
   const syncWorklet = useCallback(() => {
     if (!workletNodeRef.current) return;
+    
+    if (previewingClipId) {
+      const clip = library.find(c => c.id === previewingClipId);
+      if (clip) {
+        workletNodeRef.current.port.postMessage({ type: 'setEquation', equation: clip.eq });
+      }
+      return;
+    }
+
     if (activeTab === 'synth') {
       workletNodeRef.current.port.postMessage({ type: 'setEquation', equation });
     } else {
@@ -147,7 +157,7 @@ export default function Page() {
         })),
       });
     }
-  }, [activeTab, clips, equation, mutedTrackIds, trackVolumes]);
+  }, [activeTab, clips, equation, mutedTrackIds, trackVolumes, previewingClipId, library]);
 
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (!draggingRef.current) return;
@@ -275,6 +285,82 @@ export default function Page() {
     analyserRef.current = null;
     setAnalyser(null);
   }, []);
+  const initAudioIfNeeded = useCallback(async () => {
+    if (audioCtxRef.current?.state === 'closed') {
+      audioCtxRef.current = null;
+      resetAudioGraph();
+    }
+
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    let ctx = audioCtxRef.current;
+
+    if (!ctx) {
+      try {
+        ctx = new AudioContext({ latencyHint: 'interactive' });
+      } catch (err) {
+        ctx = new AudioContext();
+      }
+      Tone.setContext(ctx);
+      await Tone.start();
+      (Tone.getContext() as { lookAhead?: number }).lookAhead = 0;
+      audioCtxRef.current = ctx;
+    }
+
+    if (!workletNodeRef.current) {
+      await ctx.audioWorklet.addModule('/worklet.js');
+
+      const workletNode = new AudioWorkletNode(ctx, 'math-processor');
+      workletNodeRef.current = workletNode;
+
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = volume;
+      gainNodeRef.current = gainNode;
+
+      const analyserNode = ctx.createAnalyser();
+      analyserNode.fftSize = 2048;
+      analyserRef.current = analyserNode;
+      setAnalyser(analyserNode);
+
+      workletNode.connect(gainNode);
+      gainNode.connect(analyserNode);
+      analyserNode.connect(ctx.destination);
+
+      workletNode.port.onmessage = (event) => {
+        if (event.data.type === 'error') {
+          setError(event.data.error);
+        } else if (event.data.type === 'success') {
+          setError(null);
+        }
+      };
+
+      workletNode.port.postMessage({ type: 'setTempo', bpm });
+      if (activeTab === 'synth') {
+        workletNode.port.postMessage({ type: 'resetTime' });
+      }
+    }
+    return ctx;
+  }, [activeTab, bpm, resetAudioGraph, volume]);
+
+  const togglePreviewClip = useCallback(async (clipId: string) => {
+    if (previewingClipId === clipId) {
+      setPreviewingClipId(null);
+      if (!isPlayingRef.current && audioCtxRef.current && gainNodeRef.current) {
+        gainNodeRef.current.gain.setTargetAtTime(0, audioCtxRef.current.currentTime, 0.01);
+      }
+    } else {
+      setPreviewingClipId(clipId);
+      try {
+        const ctx = await initAudioIfNeeded();
+        if (gainNodeRef.current) {
+          gainNodeRef.current.gain.setTargetAtTime(volume, ctx.currentTime, 0.01);
+          await ctx.resume();
+        }
+      } catch (err: any) {
+        console.error('Audio initialization error:', err);
+        setError(err.message || 'Failed to initialize audio');
+      }
+    }
+  }, [initAudioIfNeeded, previewingClipId, volume]);
 
   const togglePlay = useCallback(async () => {
     if (isPlaying) {
@@ -289,86 +375,34 @@ export default function Page() {
     }
 
     try {
-      if (audioCtxRef.current?.state === 'closed') {
-        audioCtxRef.current = null;
-        resetAudioGraph();
+      const ctx = await initAudioIfNeeded();
+      
+      syncWorklet();
+      workletNodeRef.current?.port.postMessage({ type: 'setTempo', bpm });
+      if (activeTab === 'synth') {
+        workletNodeRef.current?.port.postMessage({ type: 'resetTime' });
       }
 
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      let ctx = audioCtxRef.current;
-
-      if (!ctx) {
-        try {
-          ctx = new AudioContext({ latencyHint: 'interactive' });
-        } catch (err) {
-          ctx = new AudioContext();
-        }
-        Tone.setContext(ctx);
-        await Tone.start();
-        (Tone.getContext() as { lookAhead?: number }).lookAhead = 0;
-        audioCtxRef.current = ctx;
-      }
-
-      if (!workletNodeRef.current) {
-        await ctx.audioWorklet.addModule('/worklet.js');
-
-        const workletNode = new AudioWorkletNode(ctx, 'math-processor');
-        workletNodeRef.current = workletNode;
-
-        const gainNode = ctx.createGain();
-        gainNode.gain.value = volume;
-        gainNodeRef.current = gainNode;
-
-        const analyserNode = ctx.createAnalyser();
-        analyserNode.fftSize = 2048;
-        analyserRef.current = analyserNode;
-        setAnalyser(analyserNode);
-
-        workletNode.connect(gainNode);
-        gainNode.connect(analyserNode);
-        analyserNode.connect(ctx.destination);
-
-        workletNode.port.onmessage = (event) => {
-          if (event.data.type === 'error') {
-            setError(event.data.error);
-          } else if (event.data.type === 'success') {
-            setError(null);
-          }
-        };
-
-        syncWorklet();
-        workletNode.port.postMessage({ type: 'setTempo', bpm });
-        if (activeTab === 'synth') {
-          workletNode.port.postMessage({ type: 'resetTime' });
-        }
-      } else {
-        syncWorklet();
-        workletNodeRef.current?.port.postMessage({ type: 'setTempo', bpm });
-        if (activeTab === 'synth') {
-          workletNodeRef.current?.port.postMessage({ type: 'resetTime' });
-        }
-      }
-
-      if (audioCtxRef.current && gainNodeRef.current) {
-        gainNodeRef.current.gain.setTargetAtTime(volume, audioCtxRef.current.currentTime, 0.01);
+      if (gainNodeRef.current) {
+        gainNodeRef.current.gain.setTargetAtTime(volume, ctx.currentTime, 0.01);
         if (pauseTimeRef.current > 0) {
-          const pausedDuration = audioCtxRef.current.currentTime - pauseTimeRef.current;
+          const pausedDuration = ctx.currentTime - pauseTimeRef.current;
           timeOffsetRef.current += pausedDuration;
           pauseTimeRef.current = 0;
         }
         if (activeTab === 'producer') {
-          const correctTime = audioCtxRef.current.currentTime - timeOffsetRef.current;
+          const correctTime = ctx.currentTime - timeOffsetRef.current;
           workletNodeRef.current?.port.postMessage({ type: 'setTime', time: correctTime });
         }
       }
 
-      await audioCtxRef.current?.resume();
+      await ctx.resume();
       setIsPlaying(true);
     } catch (err: any) {
       console.error('Audio initialization error:', err);
       setError(err.message || 'Failed to initialize audio');
     }
-  }, [bpm, isPlaying, resetAudioGraph, syncWorklet, volume]);
+  }, [activeTab, bpm, initAudioIfNeeded, isPlaying, syncWorklet, volume]);
 
   const restartTimeline = useCallback(async () => {
     if (!isPlayingRef.current) {
@@ -647,6 +681,8 @@ export default function Page() {
               onAddClip={addClip}
               onLoadProjectPreset={loadProjectPreset}
               projectPresets={PROJECT_PRESETS}
+              previewingClipId={previewingClipId}
+              onTogglePreview={togglePreviewClip}
               onHide={() => setIsLibraryVisible(false)}
               onShow={() => setIsLibraryVisible(true)}
             />

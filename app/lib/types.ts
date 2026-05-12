@@ -39,4 +39,4 @@ export type LibraryItem = {
 export type ActiveTab = 'synth' | 'producer';
 export type EditorMode = 'standard' | 'desmos';
 export type SynthVisType = 'oscilloscope' | 'graph' | 'spectrum';
-export type LibraryTab = 'beats' | 'projects';
+export type LibraryTab = 'clips' | 'projects';

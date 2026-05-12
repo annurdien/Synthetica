@@ -27,7 +27,7 @@ export function SynthLibraryPanel({
         <div className="p-6 space-y-4 flex-1">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-              <Layers className="w-4 h-4" /> My Library
+              <Layers className="w-4 h-4" /> Sound Library
             </h3>
             <button onClick={onHide} className="p-2 md:p-0 text-zinc-400 hover:text-zinc-800 transition" title="Hide Library" aria-label="Hide library">
               <PanelRightClose className="w-5 h-5 md:w-4 md:h-4" />

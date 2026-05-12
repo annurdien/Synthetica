@@ -2,6 +2,11 @@ import type { Preset, ProjectPreset } from './types';
 
 export const PRESETS: Preset[] = [
   {
+    name: 'Basic Sine Wave',
+    eq: 'sin(2*PI*440*t) * 0.5',
+    bpm: 120,
+  },
+  {
     name: 'Velvet FM Rhodes',
     eq: '(sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t + (0.5+3*exp(-6*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t)) + 0.6*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t + (0.3+2*exp(-6*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t))) * exp(-2*((beat*2)%1)) * ([1,0,0.6,0, 0.8,0,0.4,0][floor(beat*2)%8]) * 0.2',
     bpm: 88,

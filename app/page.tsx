@@ -43,8 +43,8 @@ export default function Page() {
   const [isLibraryVisible, setIsLibraryVisible] = useState(true);
   const [isSynthLibraryVisible, setIsSynthLibraryVisible] = useState(true);
   const [editorMode, setEditorMode] = useState<EditorMode>('standard');
-  const [libraryTab, setLibraryTab] = useState<LibraryTab>('beats');
-  const [isEditorVisible, setIsEditorVisible] = useState(true);
+  const [libraryTab, setLibraryTab] = useState<LibraryTab>('projects');
+  const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [timelineZoom, setTimelineZoom] = useState(1);
 
   const [tracks, setTracks] = useState<Track[]>(() => PROJECT_PRESETS[0].tracks.map((track) => ({ ...track })));
@@ -123,6 +123,13 @@ export default function Page() {
   } | null>(null);
 
   const mutedTrackIds = useMemo(() => new Set(tracks.filter((track) => track.muted).map((track) => track.id)), [tracks]);
+  const trackVolumes = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const track of tracks) {
+      map.set(track.id, track.volume ?? 1);
+    }
+    return map;
+  }, [tracks]);
 
   const syncWorklet = useCallback(() => {
     if (!workletNodeRef.current) return;
@@ -136,10 +143,11 @@ export default function Page() {
           startBeat: clip.startBeat,
           endBeat: clip.startBeat + clip.lengthBeats,
           equation: clip.equation,
+          volume: trackVolumes.get(clip.trackId) ?? 1,
         })),
       });
     }
-  }, [activeTab, clips, equation, mutedTrackIds]);
+  }, [activeTab, clips, equation, mutedTrackIds, trackVolumes]);
 
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (!draggingRef.current) return;
@@ -519,12 +527,16 @@ export default function Page() {
   const addTrack = useCallback(() => {
     setTracks((prev) => {
       const newId = prev.length > 0 ? Math.max(...prev.map((track) => track.id)) + 1 : 0;
-      return [...prev, { id: newId, name: `Track ${newId + 1}`, muted: false, height: 80 }];
+      return [...prev, { id: newId, name: `Track ${newId + 1}`, muted: false, height: 80, volume: 1 }];
     });
   }, []);
 
   const toggleMute = useCallback((trackId: number) => {
     setTracks((prev) => prev.map((track) => (track.id === trackId ? { ...track, muted: !track.muted } : track)));
+  }, []);
+
+  const setTrackVolume = useCallback((trackId: number, volume: number) => {
+    setTracks((prev) => prev.map((track) => (track.id === trackId ? { ...track, volume } : track)));
   }, []);
 
   const resizeTrack = useCallback((trackId: number, height: number) => {
@@ -663,6 +675,7 @@ export default function Page() {
                 onScrubStart={handleScrubStart}
                 onClipPointerDown={handlePointerDown}
                 onToggleMute={toggleMute}
+                onSetTrackVolume={setTrackVolume}
                 onAddClip={addClip}
                 onDropPreset={handleDropPreset}
                 onAddTrack={addTrack}

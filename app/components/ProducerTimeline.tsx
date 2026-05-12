@@ -16,6 +16,7 @@ interface ProducerTimelineProps {
   onScrubStart: (event: ReactPointerEvent) => void;
   onClipPointerDown: (event: ReactPointerEvent, clipId: string, type: 'move' | 'resize') => void;
   onToggleMute: (trackId: number) => void;
+  onSetTrackVolume: (trackId: number, volume: number) => void;
   onAddClip: (trackId: number) => void;
   onDropPreset: (payload: { trackId: number; startBeat: number; eq: string; name: string }) => void;
   onAddTrack: () => void;
@@ -33,6 +34,7 @@ export function ProducerTimeline({
   onScrubStart,
   onClipPointerDown,
   onToggleMute,
+  onSetTrackVolume,
   onAddClip,
   onDropPreset,
   onAddTrack,
@@ -63,6 +65,7 @@ export function ProducerTimeline({
               totalBeats={totalBeats}
               selectedClipId={selectedClipId}
               onToggleMute={onToggleMute}
+              onSetTrackVolume={onSetTrackVolume}
               onAddClip={onAddClip}
               onClipPointerDown={onClipPointerDown}
               onDropPreset={onDropPreset}

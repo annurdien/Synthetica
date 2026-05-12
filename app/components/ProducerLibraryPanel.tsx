@@ -54,16 +54,16 @@ export function ProducerLibraryPanel({
 
             <div className="flex border-b border-zinc-100 px-6">
               <button
-                onClick={() => onLibraryTabChange('beats')}
-                className={`pb-3 text-[10px] uppercase font-bold tracking-widest flex-1 transition border-b-2 ${libraryTab === 'beats' ? 'border-zinc-800 text-zinc-800' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}
-              >
-                Beats
-              </button>
-              <button
                 onClick={() => onLibraryTabChange('projects')}
                 className={`pb-3 text-[10px] uppercase font-bold tracking-widest flex-1 transition border-b-2 ${libraryTab === 'projects' ? 'border-zinc-800 text-zinc-800' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}
               >
                 Projects
+              </button>
+              <button
+                onClick={() => onLibraryTabChange('beats')}
+                className={`pb-3 text-[10px] uppercase font-bold tracking-widest flex-1 transition border-b-2 ${libraryTab === 'beats' ? 'border-zinc-800 text-zinc-800' : 'border-transparent text-zinc-400 hover:text-zinc-600'}`}
+              >
+                Beats
               </button>
             </div>
 

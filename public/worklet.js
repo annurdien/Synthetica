@@ -44,6 +44,7 @@ class MathProcessor extends AudioWorkletProcessor {
             return {
               startBeat: clip.startBeat,
               endBeat: clip.endBeat,
+              volume: clip.volume !== undefined ? clip.volume : 1,
               evalFunc: func
             };
           });
@@ -86,7 +87,7 @@ class MathProcessor extends AudioWorkletProcessor {
             for (let c = 0; c < this.clips.length; ++c) {
               const clip = this.clips[c];
               if (currentBeat >= clip.startBeat && currentBeat < clip.endBeat) {
-                val += clip.evalFunc(tSub, this.bpm);
+                val += clip.evalFunc(tSub, this.bpm) * clip.volume;
               }
             }
           }

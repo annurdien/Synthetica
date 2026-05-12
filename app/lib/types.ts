@@ -13,6 +13,7 @@ export type Track = {
   name: string;
   muted: boolean;
   height: number;
+  volume: number;
 };
 
 export type Preset = {

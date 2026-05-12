@@ -93,7 +93,7 @@ export function ClipEditorPanel({
               </div>
 
               <div className="flex-1 flex flex-col min-h-[200px] min-w-0">
-                <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest block mb-1.5">Equation f(t)</label>
+                <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest block mb-1.5">Sound Formula</label>
                 <div className="flex-1 overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 shadow-inner">
                   <Editor
                     value={selectedClip.equation}
@@ -127,9 +127,9 @@ export function ClipEditorPanel({
             <div className="w-16 h-16 rounded-full bg-zinc-50 flex items-center justify-center mb-4 mt-8">
               <Settings2 className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="font-medium text-zinc-600 mb-2">No Clip Selected</h3>
+            <h3 className="font-medium text-zinc-600 mb-2">Select a Clip</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Select a clip on the timeline or drag a beat from the library to edit its properties and equation.
+              Click a clip on the timeline to edit its sound, timing, and properties.
             </p>
           </div>
         )

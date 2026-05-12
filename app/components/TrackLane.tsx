@@ -10,6 +10,7 @@ interface TrackLaneProps {
   totalBeats: number;
   selectedClipId: string | null;
   onToggleMute: (trackId: number) => void;
+  onSetTrackVolume: (trackId: number, volume: number) => void;
   onAddClip: (trackId: number) => void;
   onClipPointerDown: (event: ReactPointerEvent, clipId: string, type: 'move' | 'resize') => void;
   onDropPreset: (payload: { trackId: number; startBeat: number; eq: string; name: string }) => void;
@@ -22,37 +23,68 @@ export const TrackLane = memo(function TrackLane({
   totalBeats,
   selectedClipId,
   onToggleMute,
+  onSetTrackVolume,
   onAddClip,
   onClipPointerDown,
   onDropPreset,
   onResizeTrack,
 }: TrackLaneProps) {
+  const volumePercent = Math.round((track.volume ?? 1) * 100);
+
   return (
     <div
       data-trackid={track.id}
       style={{ height: track.height }}
       className={`flex border-b border-zinc-100 group relative ${track.muted ? 'bg-zinc-100 opacity-50' : 'bg-white'}`}
     >
-      <div className="w-20 md:w-32 border-r border-zinc-100 flex flex-col items-center justify-center shrink-0 relative bg-zinc-50 sticky left-0 z-20 overflow-hidden">
-        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-400 truncate w-full text-center px-1 md:px-0">
+      {/* Track header */}
+      <div className="w-20 md:w-32 border-r border-zinc-100 flex flex-col justify-center shrink-0 relative bg-zinc-50 sticky left-0 z-20 overflow-hidden px-1.5 md:px-2 py-1 gap-1">
+        {/* Row 1: Track name */}
+        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-400 truncate">
           {track.name}
         </span>
-        <button
-          onClick={() => onToggleMute(track.id)}
-          className={`mt-1 flex items-center gap-1 text-[9px] px-1 md:px-1.5 py-0.5 rounded border border-zinc-200 transition-colors ${track.muted ? 'bg-zinc-200 text-zinc-500' : 'bg-white text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'}`}
-          aria-label={track.muted ? `Unmute ${track.name}` : `Mute ${track.name}`}
-        >
-          {track.muted ? <VolumeX className="w-2.5 h-2.5 md:w-3 md:h-3" /> : <Volume2 className="w-2.5 h-2.5 md:w-3 md:h-3" />} <span className="hidden md:inline">{track.muted ? 'Muted' : 'Mute'}</span>
-        </button>
+
+        {/* Row 2: Mute button + volume % */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => onToggleMute(track.id)}
+            className={`w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded border transition-colors shrink-0 ${track.muted ? 'bg-red-100 border-red-300 text-red-500' : 'bg-white border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:border-zinc-300'}`}
+            aria-label={track.muted ? `Unmute ${track.name}` : `Mute ${track.name}`}
+            title={track.muted ? 'Unmute' : 'Mute'}
+          >
+            {track.muted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
+          </button>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={volumePercent}
+            onChange={(e) => onSetTrackVolume(track.id, parseInt(e.target.value) / 100)}
+            className="flex-1 min-w-0 h-1 cursor-pointer"
+            style={{
+              WebkitAppearance: 'none',
+              appearance: 'none',
+              background: `linear-gradient(to right, ${track.muted ? '#d4d4d8' : '#71717a'} ${volumePercent}%, #e4e4e7 ${volumePercent}%)`,
+              borderRadius: '2px',
+              height: '3px',
+            }}
+            aria-label={`Volume for ${track.name}`}
+          />
+          <span className="text-[8px] text-zinc-400 font-mono tabular-nums w-5 md:w-6 text-right shrink-0">{volumePercent}</span>
+        </div>
+
+        {/* Add clip button (top-right corner, shows on hover) */}
         <button
           onClick={() => onAddClip(track.id)}
-          className="opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-1 top-1 w-4 h-4 md:w-6 md:h-6 rounded bg-white border border-zinc-200 flex items-center justify-center text-zinc-600 hover:text-zinc-900 transition-opacity"
+          className="opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-1 top-1 w-4 h-4 md:w-5 md:h-5 rounded bg-white border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:border-zinc-300 transition-opacity"
           title="Add Clip"
           aria-label={`Add clip to ${track.name}`}
         >
           <Plus className="w-2.5 h-2.5 md:w-3 md:h-3" />
         </button>
       </div>
+
+      {/* Clip area */}
       <div
         className="flex-1 relative hover:bg-zinc-50/30 transition-colors"
         style={{ backgroundImage: 'linear-gradient(to right, #f4f4f5 1px, transparent 1px)', backgroundSize: `calc(100% / ${totalBeats}) 100%` }}
@@ -90,6 +122,7 @@ export const TrackLane = memo(function TrackLane({
         ))}
       </div>
 
+      {/* Track resize handle */}
       <div
         className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-blue-500/50 z-30 opacity-0 hover:opacity-100 transition-opacity"
         onPointerDown={(e) => {

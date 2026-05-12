@@ -56,7 +56,7 @@ export function SynthEditorPanel({
     <div className="mb-6 p-4 md:p-8 bg-white border border-zinc-200 rounded-2xl flex flex-col gap-4 shadow-sm shrink-0">
       <div className="flex justify-between items-center relative z-20">
         <h2 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1 md:gap-2">
-          <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Global </span>Synthesizer<span className="hidden md:inline"> Equation</span>
+          <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Sound </span>Editor
         </h2>
         <div className="flex items-center gap-1.5 md:gap-2 relative">
           <button
@@ -76,8 +76,8 @@ export function SynthEditorPanel({
             <button
               onClick={onToggleSavePopup}
               className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors border ${isSavePopupOpen ? 'bg-zinc-100 text-zinc-800 border-zinc-200' : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-100'}`}
-              title="Save Beat"
-              aria-label="Save beat"
+              title="Save to Library"
+              aria-label="Save to library"
             >
               <Save className="w-4 h-4" />
             </button>
@@ -87,7 +87,7 @@ export function SynthEditorPanel({
                 <div className="flex items-center gap-1.5 w-full bg-zinc-50 border border-zinc-200 rounded-xl p-1.5 focus-within:border-zinc-400 focus-within:bg-white transition-all">
                   <input
                     type="text"
-                    placeholder="Name beat..."
+                    placeholder="Give it a name..."
                     value={saveName}
                     onChange={(e) => onSaveNameChange(e.target.value)}
                     className="bg-transparent px-2 py-1 text-xs outline-none w-full font-medium"
@@ -160,10 +160,10 @@ export function SynthEditorPanel({
       <div className="mt-3 flex flex-col gap-4 ml-0 md:ml-[88px]">
         <div className="flex gap-2 flex-wrap">
           <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 border border-zinc-100 px-2.5 py-1.5 rounded-md">
-            Math: <span className="text-zinc-500 font-mono lowercase">sin, cos, tan, abs, floor, random, sign</span>
+            Functions: <span className="text-zinc-500 font-mono lowercase">sin, cos, tan, abs, floor, random, sign</span>
           </span>
           <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 border border-zinc-100 px-2.5 py-1.5 rounded-md">
-            Vars: <span className="text-zinc-500 font-mono lowercase">t, beat</span>
+            Variables: <span className="text-zinc-500 font-mono lowercase">t, beat</span>
           </span>
         </div>
       </div>

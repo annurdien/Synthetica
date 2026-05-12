@@ -1,0 +1,389 @@
+{
+  "name": "Day One (MIDI Blocks)",
+  "bpm": 48,
+  "clips": [
+    {
+      "id": "do_lh_0",
+      "trackId": 0,
+      "startBeat": 0,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*220*t) + sin(2*PI*261.63*t) + sin(2*PI*329.63*t)) * 0.1 * exp(-0.5*(beat - 0))",
+      "name": "Am Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_1",
+      "trackId": 0,
+      "startBeat": 4,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*174.61*t) + sin(2*PI*220*t) + sin(2*PI*261.63*t)) * 0.1 * exp(-0.5*(beat - 4))",
+      "name": "F Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_2",
+      "trackId": 0,
+      "startBeat": 8,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*196*t) + sin(2*PI*246.94*t) + sin(2*PI*293.66*t)) * 0.1 * exp(-0.5*(beat - 8))",
+      "name": "G Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_3",
+      "trackId": 0,
+      "startBeat": 12,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*220*t) + sin(2*PI*261.63*t) + sin(2*PI*329.63*t)) * 0.1 * exp(-0.5*(beat - 12))",
+      "name": "Am Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_4",
+      "trackId": 0,
+      "startBeat": 16,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*220*t) + sin(2*PI*261.63*t) + sin(2*PI*329.63*t)) * 0.1 * exp(-0.5*(beat - 16))",
+      "name": "Am Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_5",
+      "trackId": 0,
+      "startBeat": 20,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*174.61*t) + sin(2*PI*220*t) + sin(2*PI*261.63*t)) * 0.1 * exp(-0.5*(beat - 20))",
+      "name": "F Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_6",
+      "trackId": 0,
+      "startBeat": 24,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*196*t) + sin(2*PI*246.94*t) + sin(2*PI*293.66*t)) * 0.1 * exp(-0.5*(beat - 24))",
+      "name": "G Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_lh_7",
+      "trackId": 0,
+      "startBeat": 28,
+      "lengthBeats": 4,
+      "equation": "(sin(2*PI*220*t) + sin(2*PI*261.63*t) + sin(2*PI*329.63*t)) * 0.1 * exp(-0.5*(beat - 28))",
+      "name": "Am Chord",
+      "color": "#1e40af"
+    },
+    {
+      "id": "do_rht_8",
+      "trackId": 1,
+      "startBeat": 0,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*392*t) * 0.15 * exp(-2*(beat - 0))",
+      "name": "G4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_9",
+      "trackId": 1,
+      "startBeat": 2,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*392*t) * 0.15 * exp(-2*(beat - 2))",
+      "name": "G4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_10",
+      "trackId": 1,
+      "startBeat": 4,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*440*t) * 0.15 * exp(-2*(beat - 4))",
+      "name": "A4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_11",
+      "trackId": 1,
+      "startBeat": 6,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*440*t) * 0.15 * exp(-2*(beat - 6))",
+      "name": "A4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_12",
+      "trackId": 1,
+      "startBeat": 8,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*523.25*t) * 0.15 * exp(-2*(beat - 8))",
+      "name": "C5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_13",
+      "trackId": 1,
+      "startBeat": 10,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*523.25*t) * 0.15 * exp(-2*(beat - 10))",
+      "name": "C5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_14",
+      "trackId": 1,
+      "startBeat": 12,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*587.33*t) * 0.15 * exp(-2*(beat - 12))",
+      "name": "D5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_15",
+      "trackId": 1,
+      "startBeat": 14,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*587.33*t) * 0.15 * exp(-2*(beat - 14))",
+      "name": "D5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_16",
+      "trackId": 1,
+      "startBeat": 16,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*392*t) * 0.15 * exp(-2*(beat - 16))",
+      "name": "G4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_17",
+      "trackId": 1,
+      "startBeat": 18,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*392*t) * 0.15 * exp(-2*(beat - 18))",
+      "name": "G4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_18",
+      "trackId": 1,
+      "startBeat": 20,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*440*t) * 0.15 * exp(-2*(beat - 20))",
+      "name": "A4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_19",
+      "trackId": 1,
+      "startBeat": 22,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*440*t) * 0.15 * exp(-2*(beat - 22))",
+      "name": "A4",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_20",
+      "trackId": 1,
+      "startBeat": 24,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*523.25*t) * 0.15 * exp(-2*(beat - 24))",
+      "name": "C5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_21",
+      "trackId": 1,
+      "startBeat": 26,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*523.25*t) * 0.15 * exp(-2*(beat - 26))",
+      "name": "C5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_22",
+      "trackId": 1,
+      "startBeat": 28,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*587.33*t) * 0.15 * exp(-2*(beat - 28))",
+      "name": "D5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rht_23",
+      "trackId": 1,
+      "startBeat": 30,
+      "lengthBeats": 1.5,
+      "equation": "sin(2*PI*587.33*t) * 0.15 * exp(-2*(beat - 30))",
+      "name": "D5",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "do_rhb_24",
+      "trackId": 2,
+      "startBeat": 1.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 1.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_25",
+      "trackId": 2,
+      "startBeat": 3.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 3.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_26",
+      "trackId": 2,
+      "startBeat": 5.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 5.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_27",
+      "trackId": 2,
+      "startBeat": 7.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 7.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_28",
+      "trackId": 2,
+      "startBeat": 9.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 9.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_29",
+      "trackId": 2,
+      "startBeat": 11.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 11.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_30",
+      "trackId": 2,
+      "startBeat": 13.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 13.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_31",
+      "trackId": 2,
+      "startBeat": 15.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 15.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_32",
+      "trackId": 2,
+      "startBeat": 17.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 17.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_33",
+      "trackId": 2,
+      "startBeat": 19.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 19.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_34",
+      "trackId": 2,
+      "startBeat": 21.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 21.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_35",
+      "trackId": 2,
+      "startBeat": 23.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 23.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_36",
+      "trackId": 2,
+      "startBeat": 25.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 25.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_37",
+      "trackId": 2,
+      "startBeat": 27.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 27.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_38",
+      "trackId": 2,
+      "startBeat": 29.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 29.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "do_rhb_39",
+      "trackId": 2,
+      "startBeat": 31.5,
+      "lengthBeats": 0.5,
+      "equation": "sin(2*PI*329.63*t) * 0.15 * exp(-5*(beat - 31.5))",
+      "name": "E4",
+      "color": "#8b5cf6"
+    }
+  ],
+  "tracks": [
+    {
+      "id": 0,
+      "name": "Left Hand (Chords)",
+      "muted": false,
+      "height": 80,
+      "volume": 1
+    },
+    {
+      "id": 1,
+      "name": "Right Hand (Melody)",
+      "muted": false,
+      "height": 80,
+      "volume": 1
+    },
+    {
+      "id": 2,
+      "name": "Right Hand (Ostinato)",
+      "muted": false,
+      "height": 80,
+      "volume": 1
+    }
+  ]
+}

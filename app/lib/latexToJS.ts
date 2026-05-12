@@ -9,8 +9,25 @@ export function latexToJS(latex: string): string {
     // Replace constants
     js = js.replace(/\\pi/g, 'PI');
     js = js.replace(/\\infty/g, 'Infinity');
+
+    const powerFuncMap: Record<string, string> = {
+        'sin': 'sin', 'cos': 'cos', 'tan': 'tan', 'arcsin': 'asin',
+        'arccos': 'acos', 'arctan': 'atan', 'ln': 'log', 'log': 'log10',
+        'exp': 'exp', 'sign': 'sign', 'floor': 'floor'
+    };
+
+    // Handle functions with powers e.g. \sin^2\left(x\right) or \sin^{2}(x)
+    js = js.replace(/\\(sin|cos|tan|arcsin|arccos|arctan|ln|log|exp|sign|floor)\^\{?([0-9.]+)\}?\\left\((.*?)\\right\)/g, (match, func, exp, inner) => {
+        const jsFunc = powerFuncMap[func];
+        return `(${jsFunc}(${inner}))**${exp}`;
+    });
+
+    js = js.replace(/\\(sin|cos|tan|arcsin|arccos|arctan|ln|log|exp|sign|floor)\^\{?([0-9.]+)\}?\((.*?)\)/g, (match, func, exp, inner) => {
+        const jsFunc = powerFuncMap[func];
+        return `(${jsFunc}(${inner}))**${exp}`;
+    });
     
-    // Replace mathematical functions
+    // Replace mathematical functions without powers
     const funcMap: Record<string, string> = {
         '\\\\sin': 'sin',
         '\\\\cos': 'cos',
@@ -56,16 +73,19 @@ export function latexToJS(latex: string): string {
     js = js.replace(/\\left\[/g, '[').replace(/\\right\]/g, ']');
     js = js.replace(/\\left\\\{/g, '{').replace(/\\right\\\}/g, '}');
 
-    // Ensure missing multiplication is filled (heuristic: number followed by variable -> number * variable)
-    // Avoid overriding Math.sin, etc.
-    // Replace numbers concatenated with variables like 2t -> 2*t
+    // Strip curly braces
+    js = js.replace(/[\{\}]/g, ''); 
+
+    // Add implicit multiplication (heuristic: number followed by variable -> number * variable)
     js = js.replace(/([0-9])([a-zA-Z])/g, '$1*$2');
     
-    // Replace some spaces
-    js = js.replace(/\\\s|,/g, ' ');
-
-    js = js.replace(/\\/g, ''); // strip remaining backslashes
-    js = js.replace(/[\{\}]/g, ''); // strip curly braces
+    // Strip remaining backslashes and spaces
+    js = js.replace(/\\/g, ''); 
+    js = js.replace(/\s+/g, '');
+    
+    // Add implicit multiplication around PI (since we removed spaces, PIx becomes PI*x)
+    js = js.replace(/PI([a-zA-Z])/g, 'PI*$1');
+    js = js.replace(/([a-zA-Z])PI/g, '$1*PI');
 
     return js;
 }

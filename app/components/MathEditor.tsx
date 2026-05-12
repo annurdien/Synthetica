@@ -1,8 +1,16 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 import { latexToJS } from '@/app/lib/latexToJS';
+
+const MathQuillEditor = dynamic(
+  () => import('react-mathquill').then((mod) => {
+    mod.addStyles();
+    return mod.EditableMathField;
+  }),
+  { ssr: false, loading: () => <div style={{ width: '100%', height: '3rem' }}></div> }
+);
 
 const MathEditorInner = ({
   value,
@@ -13,49 +21,44 @@ const MathEditorInner = ({
   onChange: (v: string) => void;
   onJsChange?: (js: string) => void;
 }) => {
-  const mf = useRef<any>(null);
-  
-  useEffect(() => {
-    let disposed = false;
-    let cleanup = () => undefined;
-
-    const attach = async () => {
-      await import('mathlive');
-      if (disposed || !mf.current) return;
-
-      const field = mf.current;
-      const handleInput = () => {
-        const latexValue = field.value || '';
-        onChange(latexValue);
-        if (onJsChange) {
-          onJsChange(latexToJS(latexValue));
+  return (
+    <div style={{ width: '100%', fontSize: '1.5rem', background: 'transparent', border: 'none', display: 'flex', alignItems: 'center' }}>
+      <MathQuillEditor
+        latex={value}
+        onChange={(mathField) => {
+          const latexValue = mathField.latex();
+          onChange(latexValue);
+          if (onJsChange) {
+            onJsChange(latexToJS(latexValue));
+          }
+        }}
+        config={{
+          spaceBehavesLikeTab: true,
+          leftRightIntoCmdGoes: 'up',
+          restrictMismatchedBrackets: true,
+          sumStartsWithAutoCalc: true,
+          supSubsRequireOperand: true,
+          charsThatBreakOutOfSupSub: '+-=<>',
+          autoSubscriptNumerals: true,
+          autoCommands: 'pi theta sqrt sum prod alpha beta gamma delta epsilon',
+          autoOperatorNames: 'sin cos tan exp ln log',
+        }}
+      />
+      <style>{`
+        .mq-editable-field {
+          border: none !important;
+          box-shadow: none !important;
+          width: 100%;
+          padding: 0.5rem;
+          background: transparent;
         }
-      };
-
-      field.value = value;
-      field.addEventListener('input', handleInput);
-      cleanup = () => field.removeEventListener('input', handleInput);
-    };
-
-    attach();
-
-    return () => {
-      disposed = true;
-      cleanup();
-    };
-  }, [onChange, onJsChange]);
-
-  // Sync value when changed from outside
-  useEffect(() => {
-     if (mf.current && mf.current.value !== value) {
-         mf.current.value = value;
-     }
-  }, [value]);
-
-  return React.createElement('math-field', {
-    ref: mf,
-    style: { width: '100%', fontSize: '2rem', outline: 'none', background: 'transparent', border: 'none' },
-  });
+        .mq-editable-field.mq-focused {
+          box-shadow: none !important;
+          outline: none !important;
+        }
+      `}</style>
+    </div>
+  );
 };
 
-export const MathEditor = dynamic(() => Promise.resolve(MathEditorInner), { ssr: false });
+export const MathEditor = MathEditorInner;

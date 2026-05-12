@@ -17,7 +17,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="relative flex items-center justify-center w-12 h-12 rounded-full border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden hover:scale-110 transition-transform duration-300"
+      className="relative flex items-center justify-center w-12 h-12 rounded-full border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden hover:scale-110 transition-transform duration-300 cursor-pointer"
       aria-label="Toggle theme"
     >
       <motion.svg

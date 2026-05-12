@@ -3,11 +3,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { MusicAnimation } from '@/app/components/MusicAnimation';
 import { LandingMusicPlayer } from '@/app/components/LandingMusicPlayer';
+import { LaunchButton } from '@/app/components/LaunchButton';
 import { ThemeToggle } from '@/app/components/ThemeToggle';
-import { ArrowRight, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
+
+import type * as Tone from 'tone';
 
 export default function LandingPage() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioNodes, setAudioNodes] = useState<{ waveform: Tone.Waveform } | null>(null);
 
   return (
     <main className="w-full min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col relative overflow-hidden selection:bg-zinc-200 dark:selection:bg-zinc-800">
@@ -28,7 +32,7 @@ export default function LandingPage() {
 
         {/* Animation Area */}
         <div className="h-40 md:h-56 w-full flex items-end justify-center mb-12">
-          <MusicAnimation playing={isPlaying} />
+          <MusicAnimation playing={isPlaying} audioNodes={audioNodes} />
         </div>
 
         {/* Fancy Typography Hero */}
@@ -46,15 +50,12 @@ export default function LandingPage() {
 
         {/* Call to Actions */}
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          <Link 
-            href="/studio"
-            className="group flex items-center gap-2 px-8 py-4 rounded-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-950 font-sans font-bold uppercase tracking-widest text-sm transition-colors border-2 border-zinc-900 dark:border-zinc-100"
-          >
-            Launch Studio
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <LaunchButton />
           
-          <LandingMusicPlayer onPlayingChange={setIsPlaying} />
+          <LandingMusicPlayer 
+            onPlayingChange={setIsPlaying} 
+            onInitAnalyser={setAudioNodes} 
+          />
         </div>
       </div>
     </main>

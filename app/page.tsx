@@ -22,11 +22,26 @@ import type {
   Track,
 } from '@/app/lib/types';
 
+const createReverbImpulse = (ctx: AudioContext) => {
+  const sampleRate = ctx.sampleRate;
+  const length = sampleRate * 2.5; // 2.5 seconds reverb decay
+  const impulse = ctx.createBuffer(2, length, sampleRate);
+  const left = impulse.getChannelData(0);
+  const right = impulse.getChannelData(1);
+  for (let i = 0; i < length; i++) {
+    const decay = Math.exp(-i / (sampleRate * 0.5));
+    left[i] = (Math.random() * 2 - 1) * decay;
+    right[i] = (Math.random() * 2 - 1) * decay;
+  }
+  return impulse;
+};
+
 export default function Page() {
   const [equation, setEquation] = useState(PRESETS[0].eq);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [volume, setVolume] = useState(0.5);
+  const [reverb, setReverb] = useState(0.3);
   const [bpm, setBpm] = useState(PRESETS[0].bpm);
 
   const [library, setLibrary] = useState<LibraryItem[]>(() =>
@@ -59,6 +74,8 @@ export default function Page() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const wetGainRef = useRef<GainNode | null>(null);
+  const dryGainRef = useRef<GainNode | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
@@ -93,6 +110,27 @@ export default function Page() {
 
       if (playheadRef.current) {
         playheadRef.current.style.left = `${positionPercentage}%`;
+        
+        // Auto-scroll logic to follow the seeker
+        const scrollContainer = document.getElementById('scroll-container');
+        if (scrollContainer) {
+          const isDesktop = window.innerWidth >= 768;
+          const sidebarWidth = isDesktop ? 128 : 80; // w-32 or w-20
+          
+          // Calculate the true absolute pixel position of the playhead from the far left of the full content
+          const playheadAbsoluteX = sidebarWidth + (positionPercentage / 100) * (scrollContainer.scrollWidth - sidebarWidth);
+          
+          const containerWidth = scrollContainer.clientWidth;
+          const RIGHT_VISIBLE_EDGE = containerWidth - 50; // 50px buffer from the Clip Editor (right sidebar)
+          
+          // Continuous smooth sliding: lock the seeker to the right edge
+          // It will stay at 0 until the playhead reaches the right edge, then slide continuously
+          if (playheadAbsoluteX > RIGHT_VISIBLE_EDGE) {
+            scrollContainer.scrollLeft = playheadAbsoluteX - RIGHT_VISIBLE_EDGE;
+          } else {
+            scrollContainer.scrollLeft = 0;
+          }
+        }
       }
     } else if (playheadRef.current && !isPlayingRef.current) {
       let t = 0;
@@ -282,6 +320,8 @@ export default function Page() {
   const resetAudioGraph = useCallback(() => {
     workletNodeRef.current = null;
     gainNodeRef.current = null;
+    wetGainRef.current = null;
+    dryGainRef.current = null;
     analyserRef.current = null;
     setAnalyser(null);
   }, []);
@@ -321,7 +361,26 @@ export default function Page() {
       analyserRef.current = analyserNode;
       setAnalyser(analyserNode);
 
-      workletNode.connect(gainNode);
+      // Master Reverb Bus
+      const convolverNode = ctx.createConvolver();
+      convolverNode.buffer = createReverbImpulse(ctx);
+      
+      const dryGain = ctx.createGain();
+      dryGain.gain.value = 1.0 - reverb; // Dry signal slightly reduced to make room for reverb
+      dryGainRef.current = dryGain;
+      
+      const wetGain = ctx.createGain();
+      wetGain.gain.value = reverb; // Reverb amount
+      wetGainRef.current = wetGain;
+
+      // Routing
+      workletNode.connect(dryGain);
+      workletNode.connect(convolverNode);
+      convolverNode.connect(wetGain);
+      
+      dryGain.connect(gainNode);
+      wetGain.connect(gainNode);
+      
       gainNode.connect(analyserNode);
       analyserNode.connect(ctx.destination);
 
@@ -339,7 +398,7 @@ export default function Page() {
       }
     }
     return ctx;
-  }, [activeTab, bpm, resetAudioGraph, volume]);
+  }, [activeTab, bpm, resetAudioGraph, volume, reverb]);
 
   const togglePreviewClip = useCallback(async (clipId: string) => {
     if (previewingClipId === clipId) {
@@ -435,6 +494,15 @@ export default function Page() {
       gainNodeRef.current.gain.setTargetAtTime(volume, audioCtxRef.current.currentTime, 0.05);
     }
   }, [volume]);
+
+  useEffect(() => {
+    if (wetGainRef.current && audioCtxRef.current) {
+      wetGainRef.current.gain.setTargetAtTime(reverb, audioCtxRef.current.currentTime, 0.05);
+    }
+    if (dryGainRef.current && audioCtxRef.current) {
+      dryGainRef.current.gain.setTargetAtTime(1.0 - reverb, audioCtxRef.current.currentTime, 0.05);
+    }
+  }, [reverb]);
 
   useEffect(() => {
     if (workletNodeRef.current) {
@@ -623,6 +691,8 @@ export default function Page() {
         onBpmChange={setBpm}
         volume={volume}
         onVolumeChange={setVolume}
+        reverb={reverb}
+        onReverbChange={setReverb}
       />
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">

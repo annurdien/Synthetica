@@ -94,7 +94,7 @@ export function ClipEditorPanel({
 
               <div className="flex-1 flex flex-col min-h-[200px] min-w-0">
                 <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest block mb-1.5">Sound Formula</label>
-                <div className="flex-1 overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 shadow-inner">
+                <div className="flex-1 overflow-y-auto bg-zinc-50 border border-zinc-200 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 shadow-inner">
                   <Editor
                     value={selectedClip.equation}
                     onValueChange={(code) => onUpdateClip({ equation: code })}

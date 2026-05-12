@@ -10,6 +10,8 @@ interface AppHeaderProps {
   onBpmChange: (bpm: number) => void;
   volume: number;
   onVolumeChange: (volume: number) => void;
+  reverb: number;
+  onReverbChange: (reverb: number) => void;
 }
 
 export function AppHeader({
@@ -20,6 +22,8 @@ export function AppHeader({
   onBpmChange,
   volume,
   onVolumeChange,
+  reverb,
+  onReverbChange,
 }: AppHeaderProps) {
   return (
     <header className="h-auto md:h-16 shrink-0 border-b border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between px-4 md:px-8 py-4 sm:py-0 gap-4">
@@ -83,6 +87,19 @@ export function AppHeader({
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
             className="w-20 sm:w-24 accent-zinc-900"
             aria-label="Master volume"
+          />
+        </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-400">Reverb</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={reverb}
+            onChange={(e) => onReverbChange(parseFloat(e.target.value))}
+            className="w-20 sm:w-24 accent-zinc-900"
+            aria-label="Master reverb"
           />
         </div>
       </div>

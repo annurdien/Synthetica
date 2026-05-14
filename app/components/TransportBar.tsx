@@ -1,5 +1,13 @@
 'use client';
-import { PanelLeft, Play, Rewind, Settings2, Square, ZoomIn, ZoomOut } from 'lucide-react';
+import { type RefObject } from 'react';
+import { 
+  Play, 
+  Rewind, 
+  Square, 
+  ZoomIn, 
+  ZoomOut,
+  Clock
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TransportBarProps {
@@ -12,6 +20,7 @@ interface TransportBarProps {
   onZoomIn: () => void;
   onShowLibrary: () => void;
   onShowEditor: () => void;
+  timerRef?: RefObject<HTMLSpanElement | null>;
 }
 
 export function TransportBar({
@@ -24,74 +33,70 @@ export function TransportBar({
   onZoomIn,
   onShowLibrary,
   onShowEditor,
+  timerRef,
 }: TransportBarProps) {
   return (
-    <div className="h-20 border-b border-black/5 dark:border-white/10 flex items-center px-6 md:px-10 gap-4 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-3xl shrink-0 z-10 relative transition-colors duration-500">
-      <div className="flex items-center gap-3">
+    <div className="h-16 border-b border-black/5 dark:border-white/10 flex items-center px-6 gap-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-3xl shrink-0 z-10 relative transition-all duration-500">
+      {/* Main Playback Controls */}
+      <div className="flex-1 flex items-center justify-center gap-4">
         <button
           onClick={onRestart}
-          className="w-12 h-12 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center bg-white/50 dark:bg-zinc-800/50 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:scale-110 transition-all duration-300"
+          className="w-10 h-10 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 active:scale-90"
           title="Rewind to Start"
         >
-          <Rewind className="w-5 h-5 fill-current" />
+          <Rewind className="w-4 h-4 fill-current" />
         </button>
+
         <button
           onClick={onTogglePlay}
-          className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 hover:scale-110 active:scale-95 group ${
+          className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-95 shadow-2xl relative overflow-hidden group ${
             isPlaying 
-              ? 'bg-black/5 dark:bg-white/10 border-black/10 dark:border-white/30 text-zinc-900 dark:text-white' 
-              : 'bg-black dark:bg-white border-black dark:border-white text-white dark:text-black shadow-xl'
+              ? 'bg-zinc-900 dark:bg-white text-white dark:text-black' 
+              : 'bg-black dark:bg-white text-white dark:text-black'
           }`}
         >
           <AnimatePresence mode="wait">
             <motion.div
               key={isPlaying ? 'pause' : 'play'}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0, scale: 0.8, rotate: isPlaying ? -90 : 0 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.8, rotate: isPlaying ? 0 : 90 }}
+              transition={{ duration: 0.2, type: 'spring', stiffness: 300, damping: 20 }}
             >
               {isPlaying ? <Square className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current translate-x-0.5" />}
             </motion.div>
           </AnimatePresence>
         </button>
+
+        <div className="hidden sm:flex flex-col items-center gap-1 min-w-[80px]">
+           <div className="flex items-center gap-2">
+             <Clock className="w-3 h-3 text-zinc-400" />
+             <span ref={timerRef} className="text-[10px] font-mono font-bold text-zinc-900 dark:text-zinc-100 tracking-tighter">00:00:00</span>
+           </div>
+           <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest">{totalBeats} Beats</span>
+        </div>
       </div>
 
-      <div className="h-8 w-[1px] bg-black/5 dark:bg-white/5 mx-4 hidden md:block"></div>
-      
-      <div className="hidden md:flex flex-col gap-1">
-        <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-zinc-400 dark:text-zinc-600">Timeline</span>
-        <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">
-          {totalBeats} Beats
-        </span>
-      </div>
-
-      <div className="ml-auto flex items-center gap-6">
-        <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-900/50 border border-black/5 dark:border-white/5 rounded-full p-1.5 shadow-inner">
+      {/* Utility Area */}
+      <div className="flex items-center gap-6 shrink-0">
+        <div className="hidden md:flex items-center gap-2 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-xl p-1 shrink-0">
           <button
             onClick={onZoomOut}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white dark:hover:bg-black transition-all duration-300"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white dark:hover:bg-zinc-800 transition-all duration-300"
             title="Zoom Out"
           >
-            <ZoomOut className="w-4 h-4" />
+            <ZoomOut className="w-3.5 h-3.5" />
           </button>
-          <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 w-14 text-center uppercase tracking-widest">{Math.round(timelineZoom * 100)}%</span>
+          <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 w-10 text-center tracking-tighter">{Math.round(timelineZoom * 100)}%</span>
           <button
             onClick={onZoomIn}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white dark:hover:bg-black transition-all duration-300"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white dark:hover:bg-zinc-800 transition-all duration-300"
             title="Zoom In"
           >
-            <ZoomIn className="w-4 h-4" />
+            <ZoomIn className="w-3.5 h-3.5" />
           </button>
         </div>
-
-        <div className="h-8 w-[1px] bg-black/5 dark:bg-white/5 mx-2 hidden md:block"></div>
-
-        <button className="md:hidden w-10 h-10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center bg-white/50 dark:bg-zinc-800/50 text-zinc-400" onClick={onShowEditor}>
-          <Settings2 className="w-5 h-5" />
-        </button>
       </div>
     </div>
   );
 }
-

@@ -11,8 +11,7 @@ import {
   Clock, 
   Maximize2,
   Code2,
-  Activity,
-  Waveform
+  Activity
 } from 'lucide-react';
 import type { Clip } from '@/app/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';

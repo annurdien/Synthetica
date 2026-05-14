@@ -1,6 +1,6 @@
 'use client';
 import { memo, type PointerEvent as ReactPointerEvent } from 'react';
-import { Plus, Volume2, VolumeX } from 'lucide-react';
+import { Plus, Volume2, VolumeX, MoreVertical, SlidersHorizontal, Activity } from 'lucide-react';
 import { ClipItem } from '@/app/components/ClipItem';
 import type { Clip, Track } from '@/app/lib/types';
 
@@ -35,61 +35,71 @@ export const TrackLane = memo(function TrackLane({
     <div
       data-trackid={track.id}
       style={{ height: track.height }}
-      className={`flex border-b border-zinc-100 dark:border-zinc-800/50 group relative ${track.muted ? 'bg-zinc-100 dark:bg-zinc-800 opacity-50' : 'bg-white dark:bg-zinc-950'}`}
+      className={`flex border-b border-black/5 dark:border-white/5 group relative transition-colors duration-500 ${
+        track.muted ? 'bg-zinc-100/50 dark:bg-zinc-900/50' : 'bg-white dark:bg-zinc-950'
+      }`}
     >
-      <div className="w-20 md:w-32 border-r border-black/5 dark:border-white/10 flex flex-col justify-center shrink-0 relative bg-zinc-50 dark:bg-zinc-900 sticky left-0 z-20 overflow-hidden px-1.5 md:px-2 py-1 gap-1">
-        {/* Row 1: Track name */}
-        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 truncate">
-          {track.name}
-        </span>
+      {/* Sophisticated Track Header */}
+      <div className="w-40 border-r border-black/5 dark:border-white/10 flex flex-col shrink-0 relative bg-zinc-50 dark:bg-zinc-900 sticky left-0 z-20 overflow-hidden shadow-sm">
+        <div className="flex-1 p-3 flex flex-col gap-3">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest truncate">
+              {track.name}
+            </span>
+          </div>
 
-        {/* Row 2: Mute button + volume % */}
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onToggleMute(track.id)}
-            className={`w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-md border-0 transition-colors shrink-0 ${track.muted ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300' : 'bg-transparent text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}`}
-            aria-label={track.muted ? `Unmute ${track.name}` : `Mute ${track.name}`}
-            title={track.muted ? 'Unmute' : 'Mute'}
-          >
-            {track.muted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
-          </button>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={volumePercent}
-            onChange={(e) => onSetTrackVolume(track.id, parseInt(e.target.value) / 100)}
-            className={`flex-1 min-w-0 h-1.5 cursor-pointer rounded-full accent-zinc-400 dark:accent-zinc-600`}
-            aria-label={`Volume for ${track.name}`}
-          />
-          <span className="text-[8px] text-zinc-400 font-mono tabular-nums w-5 md:w-6 text-right shrink-0">{volumePercent}</span>
+          <div className="flex items-center gap-2 mt-auto">
+            <button
+              onClick={() => onToggleMute(track.id)}
+              className={`w-7 h-7 flex items-center justify-center rounded-lg border-0 transition-all duration-300 shrink-0 ${
+                track.muted 
+                  ? 'bg-red-500 text-white shadow-lg scale-105' 
+                  : 'bg-black/5 dark:bg-white/5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+              title={track.muted ? 'Unmute' : 'Mute'}
+            >
+              {track.muted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            </button>
+            
+            <div className="flex-1 flex flex-col gap-1.5">
+               <div className="flex items-center justify-between">
+                  <span className="text-[8px] font-mono text-zinc-400">{volumePercent}%</span>
+               </div>
+               <input
+                type="range"
+                min={0}
+                max={100}
+                value={volumePercent}
+                onChange={(e) => onSetTrackVolume(track.id, parseInt(e.target.value) / 100)}
+                className="w-full h-1 cursor-pointer rounded-full accent-zinc-800 dark:accent-zinc-200 bg-black/5 dark:bg-white/5 appearance-none"
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Add clip button (top-right corner, shows on hover) */}
+        {/* Add clip button (shows on hover) */}
         <button
           onClick={() => onAddClip(track.id)}
-          className="opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-1 top-1 w-4 h-4 md:w-5 md:h-5 rounded-md bg-white dark:bg-zinc-800 border-0 shadow-sm flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-opacity"
+          className="opacity-0 group-hover:opacity-100 absolute right-2 top-2 w-6 h-6 rounded-lg bg-black dark:bg-white text-white dark:text-black shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
           title="Add Clip"
-          aria-label={`Add clip to ${track.name}`}
         >
-          <Plus className="w-2.5 h-2.5 md:w-3 md:h-3" />
+          <Plus className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* Clip area */}
+      {/* Modernized Clip area */}
       <div
-        className="flex-1 relative hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50/30 transition-colors text-black/5 dark:text-white/10"
-        style={{ backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px)', backgroundSize: `calc(100% / ${totalBeats}) 100%` }}
+        className="flex-1 relative transition-colors duration-500"
         onDragOver={(e) => {
           e.preventDefault();
-          e.currentTarget.classList.add('bg-blue-50/50');
+          e.currentTarget.classList.add('bg-black/[0.02]', 'dark:bg-white/[0.02]');
         }}
         onDragLeave={(e) => {
-          e.currentTarget.classList.remove('bg-blue-50/50');
+          e.currentTarget.classList.remove('bg-black/[0.02]', 'dark:bg-white/[0.02]');
         }}
         onDrop={(e) => {
           e.preventDefault();
-          e.currentTarget.classList.remove('bg-blue-50/50');
+          e.currentTarget.classList.remove('bg-black/[0.02]', 'dark:bg-white/[0.02]');
           try {
             const data = JSON.parse(e.dataTransfer.getData('application/json')) as { eq?: string; name?: string };
             if (data.eq && data.name) {
@@ -116,7 +126,7 @@ export const TrackLane = memo(function TrackLane({
 
       {/* Track resize handle */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-blue-500/50 z-30 opacity-0 hover:opacity-100 transition-opacity"
+        className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-black/10 dark:hover:bg-white/10 z-30 opacity-0 hover:opacity-100 transition-opacity"
         onPointerDown={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -145,3 +155,4 @@ export const TrackLane = memo(function TrackLane({
     </div>
   );
 });
+

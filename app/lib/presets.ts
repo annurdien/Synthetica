@@ -4712,42 +4712,42 @@ export const PROJECT_PRESETS: ProjectPreset[] = [
         id: 0,
         name: 'Note Voice 1',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       },
       {
         id: 1,
         name: 'Note Voice 2',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       },
       {
         id: 2,
         name: 'Note Voice 3',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       },
       {
         id: 3,
         name: 'Note Voice 4',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       },
       {
         id: 4,
         name: 'Note Voice 5',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       },
       {
         id: 5,
         name: 'Note Voice 6',
         muted: false,
-        height: 40,
+        height: 80,
         volume: 1
       }
     ]

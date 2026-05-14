@@ -5,9 +5,10 @@ interface VisualizerProps {
   analyser: AnalyserNode | null;
   color?: string;
   type?: 'oscilloscope' | 'spectrum';
+  isPlaying?: boolean;
 }
 
-export function Visualizer({ analyser, type = 'oscilloscope', color = '#22d3ee' }: VisualizerProps) {
+export function Visualizer({ analyser, type = 'oscilloscope', color = '#22d3ee', isPlaying }: VisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

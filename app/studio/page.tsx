@@ -81,6 +81,7 @@ export default function Page() {
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const playheadRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<HTMLSpanElement>(null);
   const timeOffsetRef = useRef<number>(0);
   const requestRef = useRef<number | null>(null);
   const syncTimerRef = useRef<number | null>(null);
@@ -111,6 +112,14 @@ export default function Page() {
       if (playheadRef.current) {
         playheadRef.current.style.left = `${positionPercentage}%`;
         
+        if (timerRef.current) {
+          const totalSeconds = Math.max(0, t);
+          const mins = Math.floor(totalSeconds / 60);
+          const secs = Math.floor(totalSeconds % 60);
+          const ms = Math.floor((totalSeconds % 1) * 100);
+          timerRef.current.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+        }
+        
         // Auto-scroll logic to follow the seeker
         const scrollContainer = document.getElementById('scroll-container');
         if (scrollContainer) {
@@ -140,6 +149,14 @@ export default function Page() {
       const currentBeat = Math.max(0, t) * (bpmRef.current / 60);
       const positionPercentage = (currentBeat / TOTAL_BEATS) * 100;
       playheadRef.current.style.left = `${positionPercentage}%`;
+      
+      if (timerRef.current) {
+        const totalSeconds = Math.max(0, t);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = Math.floor(totalSeconds % 60);
+        const ms = Math.floor((totalSeconds % 1) * 100);
+        timerRef.current.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+      }
     }
     requestRef.current = requestAnimationFrame(updatePlayheadFn);
   }, []);
@@ -197,41 +214,50 @@ export default function Page() {
     }
   }, [activeTab, clips, equation, mutedTrackIds, trackVolumes, previewingClipId, library]);
 
+  const moveRequestRef = useRef<number | null>(null);
+
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (!draggingRef.current) return;
-    const { id, type, startX, initialStartBeat, initialLength, timelineWidth } = draggingRef.current;
     
-    const deltaX = e.clientX - startX;
-    const beatsDelta = Math.round(((deltaX / timelineWidth) * TOTAL_BEATS) * 4) / 4; 
+    if (moveRequestRef.current) return;
     
-    setClips(prev => {
-      return prev.map(c => {
-        if (c.id !== id) return c;
-        if (type === 'move') {
-          let newStart = initialStartBeat + beatsDelta;
-          newStart = Math.max(0, Math.min(TOTAL_BEATS - c.lengthBeats, newStart));
-          
-          let newTrackId = c.trackId;
-          const tracksContainer = document.getElementById('tracks-container');
-          if (tracksContainer) {
-            const rect = tracksContainer.getBoundingClientRect();
-            const relativeY = e.clientY - rect.top;
-            const maybeTrackIndex = Math.floor(relativeY / 80);
-            const numTracks = tracksContainer.children.length;
-            if (maybeTrackIndex >= 0 && maybeTrackIndex < numTracks) {
-              const trackDiv = tracksContainer.children[maybeTrackIndex] as HTMLElement;
-              if (trackDiv && trackDiv.dataset.trackid) {
-                newTrackId = parseInt(trackDiv.dataset.trackid);
+    moveRequestRef.current = requestAnimationFrame(() => {
+      moveRequestRef.current = null;
+      if (!draggingRef.current) return;
+      
+      const { id, type, startX, initialStartBeat, initialLength, timelineWidth } = draggingRef.current;
+      const deltaX = e.clientX - startX;
+      const beatsDelta = Math.round(((deltaX / timelineWidth) * TOTAL_BEATS) * 4) / 4; 
+      
+      setClips(prev => {
+        return prev.map(c => {
+          if (c.id !== id) return c;
+          if (type === 'move') {
+            let newStart = initialStartBeat + beatsDelta;
+            newStart = Math.max(0, Math.min(TOTAL_BEATS - c.lengthBeats, newStart));
+            
+            let newTrackId = c.trackId;
+            const tracksContainer = document.getElementById('tracks-container');
+            if (tracksContainer) {
+              const rect = tracksContainer.getBoundingClientRect();
+              const relativeY = e.clientY - rect.top;
+              const maybeTrackIndex = Math.floor(relativeY / 80);
+              const numTracks = tracksContainer.children.length;
+              if (maybeTrackIndex >= 0 && maybeTrackIndex < numTracks) {
+                const trackDiv = tracksContainer.children[maybeTrackIndex] as HTMLElement;
+                if (trackDiv && trackDiv.dataset.trackid) {
+                  newTrackId = parseInt(trackDiv.dataset.trackid);
+                }
               }
             }
+            return { ...c, startBeat: newStart, trackId: newTrackId };
+          } else if (type === 'resize') {
+            let newLength = initialLength + beatsDelta;
+            newLength = Math.max(0.25, Math.min(TOTAL_BEATS - c.startBeat, newLength));
+            return { ...c, lengthBeats: newLength };
           }
-          return { ...c, startBeat: newStart, trackId: newTrackId };
-        } else if (type === 'resize') {
-          let newLength = initialLength + beatsDelta;
-          newLength = Math.max(0.25, Math.min(TOTAL_BEATS - c.startBeat, newLength));
-          return { ...c, lengthBeats: newLength };
-        }
-        return c;
+          return c;
+        });
       });
     });
   }, []);
@@ -782,6 +808,7 @@ export default function Page() {
                 onZoomIn={() => setTimelineZoom((zoom) => Math.min(5, zoom + 0.25))}
                 onShowLibrary={() => setIsLibraryVisible(true)}
                 onShowEditor={() => setIsEditorVisible(true)}
+                timerRef={timerRef}
               />
 
               <div className="flex-1 flex flex-col overflow-hidden relative">

@@ -74,20 +74,21 @@ export default function TutorialPage() {
   const contentOpacity = useTransform(scrollYProgress, (progress) => {
     if (STEPS.length <= 1) return 1;
     const scaled = progress * (STEPS.length - 1);
-    const fraction = scaled % 1;
-    // Fade out near edges (0 and 1), stable in the middle
-    if (fraction < 0.2) return fraction * (1 / 0.2);
-    if (fraction > 0.8) return (1 - fraction) * (1 / 0.2);
-    return 1;
+    const distance = Math.abs(scaled - Math.round(scaled));
+    // Fully visible exactly at the step (distance = 0)
+    if (distance < 0.1) return 1;
+    // Fade out completely when halfway between steps (distance = 0.5)
+    if (distance > 0.4) return 0;
+    return 1 - ((distance - 0.1) / 0.3);
   });
 
   // Parallax up/down floating effect for the text
   const yOffset = useTransform(scrollYProgress, (progress) => {
     if (STEPS.length <= 1) return 0;
     const scaled = progress * (STEPS.length - 1);
-    const fraction = scaled % 1;
-    if (fraction < 0.5) return (0.5 - fraction) * 12; // coming up
-    return (0.5 - fraction) * 12; // going down
+    const diff = scaled - Math.round(scaled);
+    // Smooth transition that crosses 0 exactly at the step
+    return diff * -40;
   });
 
   const inverseYOffset = useTransform(yOffset, (y) => -y * 0.5);
@@ -127,6 +128,9 @@ export default function TutorialPage() {
       await audioCtxRef.current.suspend();
       setIsPlaying(false);
     } else {
+      if (workletNodeRef.current) {
+        workletNodeRef.current.port.postMessage({ type: 'resetTime' });
+      }
       if (audioCtxRef.current.state === 'suspended') {
         await audioCtxRef.current.resume();
       }
@@ -142,7 +146,18 @@ export default function TutorialPage() {
       const nextLatex = STEPS[stepIndex].equation;
       setLatexEquation(nextLatex);
       setEquationJs(latexToJS(nextLatex));
-      window.navigator.vibrate?.(50); // tiny haptic feedback if mobile
+      
+      try {
+        if (typeof window !== 'undefined' && window.navigator && window.navigator.userActivation) {
+          if (window.navigator.userActivation.hasBeenActive) {
+            window.navigator.vibrate?.(50); // tiny haptic feedback if mobile
+          }
+        } else {
+          window.navigator.vibrate?.(50);
+        }
+      } catch (e) {
+        // Ignore vibrate errors
+      }
     }
   });
 
@@ -154,6 +169,7 @@ export default function TutorialPage() {
 
   // Clean up audio context when leaving the tutorial
   useEffect(() => {
+    window.scrollTo(0, 0); // Reset tutorial to step 1 on reload
     const snapClass = 'tutorial-scroll-snap';
     document.documentElement.classList.add(snapClass);
     document.body.classList.add(snapClass);
@@ -168,14 +184,14 @@ export default function TutorialPage() {
 
   return (
     <div className="bg-black text-white font-sans selection:bg-amber-400/30 min-h-screen">
-      <div className="relative h-screen overflow-hidden">
+      <div className="relative">
         <div className="fixed inset-0 z-0 opacity-25 mix-blend-screen pointer-events-none">
           {analyser && <Visualizer analyser={analyser} type="oscilloscope" isPlaying={isPlaying} />}
         </div>
 
         <div className="fixed inset-0 z-10 pointer-events-none">
           {/* Top Info Bar */}
-          <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center pointer-events-auto">
+          <div className="absolute z-50 top-0 left-0 right-0 p-6 flex justify-between items-center pointer-events-auto">
             <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">
               Step {currentStep + 1} of {STEPS.length}
               {currentStep === 0 && <span className="ml-4 text-zinc-400">Scroll to advance</span>}
@@ -192,12 +208,12 @@ export default function TutorialPage() {
           </div>
 
           <div className="relative h-full flex items-center justify-center pointer-events-auto">
-            {/* Desktop: Grid layout (left text, middle eq, right controls). Mobile: Flex column. */}
-            <div className="w-full max-w-[90rem] px-6 lg:px-12 flex flex-col lg:grid lg:grid-cols-[1fr,2fr,1fr] gap-8 lg:gap-16 items-center justify-center">
+            {/* Diagonal Layout: Math (Top-Left), Equation (Center), Variables (Bottom-Right) */}
+            <div className="w-full max-w-7xl h-[70vh] px-6 lg:px-12 flex flex-col justify-between items-center relative">
               
-              {/* Left/Top: Math Explanation */}
+              {/* Top-Left: Math Explanation */}
               <motion.div 
-                className="flex flex-col text-center lg:text-left order-2 lg:order-1" 
+                className="flex flex-col self-start text-left max-w-md" 
                 style={{ opacity: contentOpacity, y: yOffset }}
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-500 font-mono mb-3">Math</p>
@@ -206,12 +222,12 @@ export default function TutorialPage() {
                 </p>
               </motion.div>
 
-              {/* Middle: Equation */}
+              {/* Center: Equation */}
               <motion.div 
-                className="flex flex-col items-center w-full order-1 lg:order-2" 
+                className="flex flex-col items-center w-full min-w-0 my-auto" 
                 style={{ opacity: contentOpacity, y: inverseYOffset }}
               >
-                <div className="tutorial-math-editor w-full">
+                <div className="tutorial-math-editor w-full overflow-x-auto overflow-y-hidden pb-6 custom-scrollbar max-w-full">
                   <MathEditor value={latexEquation} onChange={setLatexEquation} onJsChange={setEquationJs} />
                 </div>
                 <p className="mt-4 text-[10px] uppercase tracking-widest text-zinc-500 font-mono text-center">
@@ -219,9 +235,9 @@ export default function TutorialPage() {
                 </p>
               </motion.div>
 
-              {/* Right/Bottom: Controls */}
+              {/* Bottom-Right: Controls */}
               <motion.div 
-                className="flex flex-col text-center lg:text-right order-3" 
+                className="flex flex-col items-start self-end text-left" 
                 style={{ opacity: contentOpacity, y: yOffset }}
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-500 font-mono mb-3">Variables</p>
@@ -269,6 +285,20 @@ export default function TutorialPage() {
             .tutorial-math-editor .mq-editable-field {
               font-size: 3rem !important;
             }
+          }
+          /* Custom horizontal scrollbar for long equations */
+          .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
           }
         `}</style>
       </div>

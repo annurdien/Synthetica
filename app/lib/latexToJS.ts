@@ -44,6 +44,8 @@ export function latexToJS(latex: string): string {
         '\\\\sign': 'sign',
         '\\\\floor': 'floor',
         '\\\\text\\{random\\}': 'random',
+        '\\\\text\\{mod\\}': '%',
+        '\\\\text\\{floor\\}': 'floor',
     };
     
     for (const [latexFunc, jsFunc] of Object.entries(funcMap)) {

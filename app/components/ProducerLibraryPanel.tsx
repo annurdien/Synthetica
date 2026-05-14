@@ -152,10 +152,15 @@ export function ProducerLibraryPanel({
                 return (
                   <div
                     key={clip.id}
-                    className={`w-full group flex flex-col p-1 rounded-2xl transition-all border ${
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('application/json', JSON.stringify({ eq: clip.eq, name: clip.name }));
+                      e.dataTransfer.effectAllowed = 'copy';
+                    }}
+                    className={`w-full group flex flex-col p-1 rounded-2xl transition-all border cursor-grab active:cursor-grabbing ${
                       isSelected 
                         ? 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 shadow-inner' 
-                        : 'border-transparent'
+                        : 'border-transparent hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                   >
                     <div className="flex items-center gap-3 p-2 rounded-xl transition-all text-left">

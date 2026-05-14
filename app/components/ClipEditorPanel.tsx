@@ -71,7 +71,6 @@ export function ClipEditorPanel({
                       type="number"
                       step="0.25"
                       min="0"
-                      max={totalBeats - 0.25}
                       value={selectedClip.startBeat}
                       onChange={(e) => onUpdateClip({ startBeat: Number(e.target.value) })}
                       className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-lg px-2 text-center py-2 text-sm outline-none focus:border-black/20 dark:focus:border-white/20 focus:bg-white dark:focus:bg-zinc-800 font-mono transition shadow-inner"
@@ -83,7 +82,6 @@ export function ClipEditorPanel({
                       type="number"
                       step="0.25"
                       min="0.25"
-                      max={totalBeats}
                       value={selectedClip.lengthBeats}
                       onChange={(e) => onUpdateClip({ lengthBeats: Number(e.target.value) })}
                       className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-lg px-2 text-center py-2 text-sm outline-none focus:border-black/20 dark:focus:border-white/20 focus:bg-white dark:focus:bg-zinc-800 font-mono transition shadow-inner"
@@ -94,28 +92,22 @@ export function ClipEditorPanel({
 
               <div className="flex-1 flex flex-col min-h-[200px] min-w-0">
                 <label className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest block mb-1.5">Sound Formula</label>
-                <div className="flex-1 overflow-y-auto bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors">
+                <div className="flex-1 overflow-y-auto bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors flex flex-col">
                   <Editor
                     value={selectedClip.equation}
                     onValueChange={(code) => onUpdateClip({ equation: code })}
                     highlight={(code) => Prism.highlight(code, Prism.languages.javascript, 'javascript')}
                     padding={16}
-                    className="text-zinc-100 text-xs leading-relaxed outline-none font-mono min-h-full break-all"
+                    className="text-zinc-800 dark:text-zinc-100 text-xs leading-relaxed outline-none font-mono min-h-full break-all"
                     textareaClassName="outline-none focus:outline-none"
                     style={{
-                      fontFamily: '"Fira Code", "JetBrains Mono", monospace',
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
                     }}
                   />
                 </div>
 
-                {error ? (
+                {error && (
                   <div className="mt-2 text-red-500 bg-red-50 border border-red-100 p-2 rounded text-[10px] font-mono break-all">{error}</div>
-                ) : (
-                  <div className="mt-2 text-zinc-400 text-[10px] px-1">
-                    Tip: Use <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-zinc-600 dark:text-zinc-400">t</code> for time,{' '}
-                    <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-zinc-600 dark:text-zinc-400">beat</code> for current beat, and math functions like{' '}
-                    <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-zinc-600 dark:text-zinc-400">sin</code>, <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-zinc-600 dark:text-zinc-400">cos</code>.
-                  </div>
                 )}
               </div>
             </div>

@@ -6,6 +6,7 @@ import 'prismjs/themes/prism.css';
 import { Activity, Code, Layers, Play, Save, Sigma, Square } from 'lucide-react';
 import { MathEditor } from '@/app/components/MathEditor';
 import type { EditorMode } from '@/app/lib/types';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface SynthEditorPanelProps {
   isPlaying: boolean;
@@ -53,93 +54,62 @@ export function SynthEditorPanel({
   };
 
   return (
-    <div className="mb-6 p-4 md:p-8 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-3xl flex flex-col gap-4 shadow-lg shrink-0">
-      <div className="flex justify-between items-center relative z-20">
-        <h2 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1 md:gap-2">
-          <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Sound </span>Editor
-        </h2>
-        <div className="flex items-center gap-1.5 md:gap-2 relative">
-          <a
-            href="/tutorial"
-            className="hidden sm:flex text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-900/10 dark:hover:bg-blue-900/20 px-3 py-1.5 rounded-full items-center gap-1 mr-2 transition-colors"
-          >
-            Open Tutorial
-          </a>
+    <div className="flex-1 flex flex-col gap-4 relative z-10 py-2 min-h-0">
+      <div className="flex justify-between items-center relative z-20 shrink-0">
+        <div className="flex items-center gap-3">
+          <h2 className="text-sm md:text-lg font-serif italic tracking-widest text-zinc-900 dark:text-zinc-100">
+            f(t) =
+          </h2>
+        </div>
+        
+        <div className="flex items-center gap-3">
           <button
             onClick={onTogglePlay}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm ${
-              isPlaying
-                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                : 'bg-blue-500 text-white hover:bg-blue-600'
+            className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 hover:scale-110 active:scale-95 group ${
+              isPlaying 
+                ? 'bg-black/5 dark:bg-white/10 border-black/10 dark:border-white/30 text-zinc-900 dark:text-white' 
+                : 'bg-black dark:bg-white border-black dark:border-white text-white dark:text-black'
             }`}
-            title={isPlaying ? 'Stop' : 'Play Live'}
-            aria-label={isPlaying ? 'Stop live preview' : 'Play live preview'}
           >
-            {isPlaying ? <Square className="w-4 h-4" fill="currentColor" /> : <Play className="w-4 h-4 ml-0.5" fill="currentColor" />}
-          </button>
-
-          <div className="relative">
-            <button
-              onClick={onToggleSavePopup}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm border ${isSavePopupOpen ? 'bg-zinc-900/10 dark:bg-white/10 text-zinc-900 dark:text-white border-transparent' : 'bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border-black/5 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700'}`}
-              title="Save to Library"
-              aria-label="Save to library"
-            >
-              <Save className="w-4 h-4" />
-            </button>
-
-            {isSavePopupOpen && (
-              <div className="absolute top-full right-0 mt-2 p-3 bg-white dark:bg-zinc-950 border border-zinc-100/50 dark:border-zinc-800/30/30 rounded-xl shadow-xl flex flex-col gap-2 w-64 origin-top-right">
-                <div className="flex items-center gap-1.5 w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl p-1.5 focus-within:bg-white dark:focus-within:bg-zinc-900 transition-all shadow-inner">
-                  <input
-                    type="text"
-                    placeholder="Give it a name..."
-                    value={saveName}
-                    onChange={(e) => onSaveNameChange(e.target.value)}
-                    className="bg-transparent px-2 py-1 text-xs outline-none w-full font-medium"
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && saveName.trim()) {
-                        handleSave();
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={handleSave}
-                    disabled={!saveName.trim()}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-zinc-950 border border-zinc-100/50 dark:border-zinc-800/30/30 shadow-sm hover:shadow-md focus:outline-none text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 disabled:opacity-50 transition-all whitespace-nowrap"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <button
-            className="md:hidden w-8 h-8 rounded-full flex items-center justify-center bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-sm text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100 transition"
-            onClick={onShowLibrary}
-            title="Show Library"
-            aria-label="Show library"
-          >
-            <Layers className="w-4 h-4" />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isPlaying ? 'pause' : 'play'}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isPlaying ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current translate-x-0.5" />}
+              </motion.div>
+            </AnimatePresence>
           </button>
 
           <button
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm border ${editorMode === 'desmos' ? 'bg-indigo-500 border-indigo-600 text-white' : 'bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border-black/5 dark:border-white/10 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+            onClick={onToggleSavePopup}
+            className="w-10 h-10 rounded-full flex items-center justify-center border border-black/5 dark:border-white/10 bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all hover:scale-110"
+            title="Save to Library"
+          >
+            <Save className="w-4 h-4" />
+          </button>
+
+          <button
             onClick={onToggleEditorMode}
+            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-300 hover:scale-110 ${
+              editorMode === 'desmos' 
+                ? 'bg-black dark:bg-white border-black dark:border-white text-white dark:text-black' 
+                : 'border-black/5 dark:border-white/10 bg-white/50 dark:bg-zinc-800/50 text-zinc-400'
+            }`}
             title={editorMode === 'desmos' ? 'Switch to Code Editor' : 'Switch to Math Editor'}
-            aria-label={editorMode === 'desmos' ? 'Switch to code editor' : 'Switch to math editor'}
           >
-            {editorMode === 'desmos' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
+            {editorMode === 'desmos' ? <Sigma className="w-4 h-4" /> : <Code className="w-4 h-4" />}
           </button>
         </div>
       </div>
-      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
-        <div className="text-3xl sm:text-4xl font-serif italic text-blue-500 shrink-0 mt-0 sm:mt-3 select-none">f(t) =</div>
-        <div className="flex-1 min-w-0 relative w-full group max-h-[300px] overflow-y-auto bg-black/5 dark:bg-white/5 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors flex items-start">
+
+      <div className="flex-1 min-h-0 relative w-full group bg-black/5 dark:bg-white/5 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-[2rem] shadow-inner transition-all duration-500 flex items-start overflow-hidden">
+        <div className="w-full h-full overflow-y-auto">
           {editorMode === 'desmos' ? (
-            <div className="w-full px-4 py-6 flex items-center min-h-[100px]">
+            <div className="w-full px-8 py-8 flex items-center min-h-[120px]">
               <MathEditor value={latexEquation} onChange={onLatexChange} onJsChange={onLatexJsChange} />
             </div>
           ) : (
@@ -147,33 +117,24 @@ export function SynthEditorPanel({
               value={equation}
               onValueChange={(code) => onEquationChange(code)}
               highlight={(code) => Prism.highlight(code, Prism.languages.javascript, 'javascript')}
-              padding={24}
-              className="w-full text-xl sm:text-2xl md:text-3xl font-mono leading-relaxed outline-none break-all"
+              padding={32}
+              className="w-full text-2xl sm:text-3xl md:text-4xl font-mono leading-relaxed outline-none break-all text-zinc-800 dark:text-zinc-100"
               textareaClassName="outline-none focus:outline-none"
               style={{
-                fontFamily: '"Fira Code", "JetBrains Mono", monospace',
-                minHeight: '100px',
+                fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                minHeight: '120px',
               }}
               placeholder="e.g. sin(2 * PI * 440 * t)"
             />
           )}
-          {error && (
-            <div className="absolute top-full mt-2 text-red-500 text-sm font-medium bg-red-50 px-3 py-2 border border-red-100 rounded-lg shadow-sm z-10">
-              {error}
-            </div>
-          )}
         </div>
-      </div>
-      <div className="mt-3 flex flex-col gap-4 ml-0 md:ml-[88px]">
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100/50 dark:border-zinc-800/30/50 px-2.5 py-1.5 rounded-md">
-            Functions: <span className="text-zinc-500 dark:text-zinc-400 font-mono lowercase">sin, cos, tan, abs, floor, random, sign</span>
-          </span>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100/50 dark:border-zinc-800/30/50 px-2.5 py-1.5 rounded-md">
-            Variables: <span className="text-zinc-500 dark:text-zinc-400 font-mono lowercase">t, beat</span>
-          </span>
-        </div>
+        {error && (
+          <div className="absolute top-full left-0 mt-3 text-red-500 text-[10px] uppercase font-bold tracking-widest bg-white dark:bg-zinc-900 px-4 py-2 border border-red-500/20 rounded-full shadow-lg z-10 animate-in fade-in slide-in-from-top-1">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
 }
+

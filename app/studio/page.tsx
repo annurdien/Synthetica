@@ -668,13 +668,14 @@ export default function Page() {
   }, [library, searchQuery]);
 
   const handleSelectSynth = useCallback(() => {
-    stopTimelineAndReset();
+    if (isPlaying) togglePlay();
     setActiveTab('synth');
-  }, [stopTimelineAndReset]);
+  }, [isPlaying, togglePlay]);
 
   const handleSelectProducer = useCallback(() => {
+    if (isPlaying) togglePlay();
     setActiveTab('producer');
-  }, []);
+  }, [isPlaying, togglePlay]);
 
   const handleSelectPreset = useCallback((preset: LibraryItem) => {
     setEquation(preset.eq);
@@ -682,7 +683,15 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="w-full h-screen bg-zinc-50 dark:bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-100 via-zinc-50 to-white dark:from-zinc-900 dark:via-zinc-950 dark:to-black flex flex-col font-sans text-zinc-900 dark:text-zinc-100 overflow-hidden">
+    <main className="w-full h-screen bg-white dark:bg-black flex flex-col font-sans text-zinc-900 dark:text-zinc-100 overflow-hidden transition-colors duration-500 relative">
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-100 dark:from-zinc-900/40 via-white dark:via-black to-white dark:to-black" />
+        <div 
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" 
+          style={{ backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        />
+      </div>
       <AppHeader
         activeTab={activeTab}
         onSelectSynth={handleSelectSynth}
@@ -698,7 +707,7 @@ export default function Page() {
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         {activeTab === 'synth' ? (
           <>
-            <div className="flex-1 bg-transparent flex flex-col p-4 md:p-8 relative overflow-y-auto min-w-0">
+            <div className="flex-1 bg-transparent flex flex-col p-4 md:p-8 relative overflow-hidden min-w-0 h-full">
               <SynthEditorPanel
                 isPlaying={isPlaying}
                 onTogglePlay={togglePlay}
@@ -775,23 +784,25 @@ export default function Page() {
                 onShowEditor={() => setIsEditorVisible(true)}
               />
 
-              <ProducerTimeline
-                tracks={tracks}
-                clips={clips}
-                selectedClipId={selectedClipId}
-                totalBeats={TOTAL_BEATS}
-                timelineZoom={timelineZoom}
-                timelineRef={timelineRef}
-                playheadRef={playheadRef}
-                onScrubStart={handleScrubStart}
-                onClipPointerDown={handlePointerDown}
-                onToggleMute={toggleMute}
-                onSetTrackVolume={setTrackVolume}
-                onAddClip={addClip}
-                onDropPreset={handleDropPreset}
-                onAddTrack={addTrack}
-                onResizeTrack={resizeTrack}
-              />
+              <div className="flex-1 flex flex-col overflow-hidden relative">
+                <ProducerTimeline
+                  tracks={tracks}
+                  clips={clips}
+                  selectedClipId={selectedClipId}
+                  totalBeats={TOTAL_BEATS}
+                  timelineZoom={timelineZoom}
+                  timelineRef={timelineRef}
+                  playheadRef={playheadRef}
+                  onScrubStart={handleScrubStart}
+                  onClipPointerDown={handlePointerDown}
+                  onToggleMute={toggleMute}
+                  onSetTrackVolume={setTrackVolume}
+                  onAddClip={addClip}
+                  onDropPreset={handleDropPreset}
+                  onAddTrack={addTrack}
+                  onResizeTrack={resizeTrack}
+                />
+              </div>
             </div>
 
             <ClipEditorPanel

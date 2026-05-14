@@ -1,6 +1,7 @@
 'use client';
-import { Layers, PanelLeft, PanelLeftClose, Plus, Search, GripVertical } from 'lucide-react';
+import { Layers, PanelLeft, PanelLeftClose, Plus, Search, GripVertical, Play, Square } from 'lucide-react';
 import type { LibraryItem, LibraryTab, ProjectPreset } from '@/app/lib/types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProducerLibraryPanelProps {
   isVisible: boolean;
@@ -37,164 +38,169 @@ export function ProducerLibraryPanel({
 }: ProducerLibraryPanelProps) {
   return (
     <div
-      className={`border-r border-black/5 dark:border-white/10 flex flex-col bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl shrink-0 z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all duration-300 absolute md:relative top-0 left-0 bottom-0 ${isVisible ? 'w-80 md:w-80 translate-x-0' : 'w-12 -translate-x-full md:translate-x-0'}`}
+      className={`border-r border-black/5 dark:border-white/10 flex flex-col bg-white/40 dark:bg-zinc-900/40 backdrop-blur-3xl shrink-0 z-40 transition-all duration-500 ease-in-out absolute md:relative top-0 left-0 bottom-0 ${
+        isVisible ? 'w-80 translate-x-0 shadow-2xl' : 'w-16 -translate-x-full md:translate-x-0'
+      }`}
     >
-      {isVisible ? (
-        <>
-          <div className="p-0 border-b border-zinc-100 dark:border-zinc-800 dark:border-zinc-200 shrink-0 relative flex flex-col">
-            <div className="p-6 pb-0 relative">
-              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2 mb-4">
-                <Layers className="w-4 h-4" /> Library
-              </h3>
-              <button
-                onClick={onHide}
-                className="absolute top-5 right-4 p-2 md:p-0 md:top-6 text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 dark:text-zinc-200 transition"
-                title="Hide Library"
-                aria-label="Hide library"
-              >
-                <PanelLeftClose className="w-5 h-5 md:w-4 md:h-4" />
-              </button>
-            </div>
+      <AnimatePresence mode="wait">
+        {isVisible ? (
+          <motion.div 
+            key="visible"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col h-full"
+          >
+            <div className="p-8 pb-4">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <Layers className="w-4 h-4 text-zinc-400" />
+                  <h3 className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-[0.3em]">
+                    Library
+                  </h3>
+                </div>
+                <button 
+                  onClick={onHide} 
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-300"
+                >
+                  <PanelLeftClose className="w-4 h-4" />
+                </button>
+              </div>
 
-            <div className="flex border-b border-zinc-100 dark:border-zinc-800 dark:border-zinc-200 px-6">
-              <button
-                onClick={() => onLibraryTabChange('projects')}
-                className={`pb-3 text-[10px] uppercase font-bold tracking-widest flex-1 transition border-b-2 ${libraryTab === 'projects' ? 'border-zinc-800 dark:border-zinc-200 text-zinc-800 dark:text-zinc-200' : 'border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-400 dark:text-zinc-400'}`}
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => onLibraryTabChange('clips')}
-                className={`pb-3 text-[10px] uppercase font-bold tracking-widest flex-1 transition border-b-2 ${libraryTab === 'clips' ? 'border-zinc-800 dark:border-zinc-200 text-zinc-800 dark:text-zinc-200' : 'border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-400 dark:text-zinc-400'}`}
-              >
-                Clips
-              </button>
-            </div>
+              <div className="flex gap-6 mb-6">
+                <button
+                  onClick={() => onLibraryTabChange('projects')}
+                  className={`pb-2 text-[10px] uppercase font-bold tracking-[0.2em] transition-all border-b-2 ${
+                    libraryTab === 'projects' 
+                      ? 'border-black dark:border-white text-zinc-900 dark:text-white' 
+                      : 'border-transparent text-zinc-400 hover:text-zinc-600'
+                  }`}
+                >
+                  Projects
+                </button>
+                <button
+                  onClick={() => onLibraryTabChange('clips')}
+                  className={`pb-2 text-[10px] uppercase font-bold tracking-[0.2em] transition-all border-b-2 ${
+                    libraryTab === 'clips' 
+                      ? 'border-black dark:border-white text-zinc-900 dark:text-white' 
+                      : 'border-transparent text-zinc-400 hover:text-zinc-600'
+                  }`}
+                >
+                  Clips
+                </button>
+              </div>
 
-            {libraryTab === 'clips' && (
-              <div className="p-6 pt-4 shrink-0">
+              {libraryTab === 'clips' && (
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                  <Search className="w-3.5 h-3.5 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
                   <input
                     type="text"
-                    placeholder="Search clips..."
+                    placeholder="Search formula..."
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    className="w-full bg-zinc-50 dark:bg-zinc-900 dark:bg-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-lg pl-9 pr-3 py-2 text-xs outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
+                    className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-full pl-10 pr-4 py-2.5 text-xs outline-none focus:bg-white dark:focus:bg-black focus:border-black/20 dark:focus:border-white/20 transition-all"
                   />
                 </div>
-                <p className="text-[10px] text-zinc-400 mt-3">Drag a clip to the track timeline.</p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="p-4 flex-1 relative overflow-y-auto min-h-0 bg-zinc-50 dark:bg-zinc-900 dark:bg-zinc-100/50">
-            {libraryTab === 'clips' ? (
-              <div className="flex flex-col gap-2">
-                {filteredLibrary.map((preset) => (
-                  <div
-                    key={preset.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData('application/json', JSON.stringify({ eq: preset.eq, name: preset.name }));
-
-                      const ghost = document.createElement('div');
-                      ghost.style.width = '100px';
-                      ghost.style.height = '40px';
-                      ghost.style.background = '#3b82f6';
-                      ghost.style.borderRadius = '4px';
-                      ghost.style.position = 'absolute';
-                      ghost.style.top = '-1000px';
-                      document.body.appendChild(ghost);
-                      e.dataTransfer.setDragImage(ghost, 50, 20);
-                      setTimeout(() => document.body.removeChild(ghost), 0);
-                    }}
-                    className={`group relative flex items-center p-3 rounded-2xl cursor-grab active:cursor-grabbing transition-all overflow-hidden border border-transparent ${
-                      selectedClipEquation === preset.eq
-                        ? 'bg-zinc-900/5 dark:bg-white/10 text-zinc-900 dark:text-white shadow-sm border-black/5 dark:border-white/10'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-900/5 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <div className="shrink-0 mr-3 text-zinc-300 dark:text-zinc-700 group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors">
-                      <GripVertical className="w-4 h-4" />
-                    </div>
-                    <div className="relative z-10 flex flex-col flex-1 min-w-0 pr-12">
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className={`text-sm font-semibold truncate ${selectedClipEquation === preset.eq ? 'text-zinc-900 dark:text-white' : 'text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100'}`}>
-                          {preset.name}
-                        </span>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {libraryTab === 'clips' ? (
+                <div className="space-y-3">
+                  {filteredLibrary.map((preset) => {
+                    const isActive = selectedClipEquation === preset.eq;
+                    const isPreviewing = previewingClipId === preset.id;
+                    return (
+                      <div
+                        key={preset.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('application/json', JSON.stringify({ eq: preset.eq, name: preset.name }));
+                        }}
+                        className={`group relative p-4 rounded-2xl transition-all duration-300 border cursor-grab active:cursor-grabbing ${
+                          isActive
+                            ? 'bg-black dark:bg-white text-white dark:text-black border-transparent shadow-lg'
+                            : 'bg-white/50 dark:bg-zinc-800/30 border-black/5 dark:border-white/5 text-zinc-600 dark:text-zinc-400 hover:border-black/20 dark:hover:border-white/20'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <GripVertical className="w-3 h-3 text-zinc-300 dark:text-zinc-600 group-hover:text-zinc-400" />
+                            <span className={`text-sm font-semibold truncate ${isActive ? 'text-white dark:text-black' : 'text-zinc-900 dark:text-zinc-100'}`}>
+                              {preset.name}
+                            </span>
+                          </div>
+                          <div className="flex gap-1.5 ml-2">
+                             <button
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 if (onTogglePreview) onTogglePreview(preset.id);
+                               }}
+                               className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${
+                                 isPreviewing 
+                                   ? 'bg-red-500 text-white' 
+                                   : 'bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20'
+                               }`}
+                             >
+                               {isPreviewing ? <Square className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current ml-0.5" />}
+                             </button>
+                             <button
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 onAddClip(0, preset.eq, preset.name);
+                               }}
+                               className={`w-7 h-7 flex items-center justify-center rounded-full transition-all bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20`}
+                             >
+                               <Plus className="w-3 h-3" />
+                             </button>
+                          </div>
+                        </div>
+                        <div className={`font-mono text-[9px] truncate ${isActive ? 'opacity-60' : 'opacity-30'}`}>
+                          {preset.eq}
+                        </div>
                       </div>
-                      <div className={`font-mono text-[10px] truncate mt-1 ${selectedClipEquation === preset.eq ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-400 dark:text-zinc-500 opacity-60'}`}>
-                        {preset.eq}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {projectPresets.map((preset, idx) => (
+                    <button
+                      key={`${preset.name}-${idx}`}
+                      onClick={() => onLoadProjectPreset(preset)}
+                      className="w-full text-left p-5 rounded-2xl bg-white/50 dark:bg-zinc-800/30 border border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 group"
+                    >
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1 group-hover:translate-x-1 transition-transform">
+                        {preset.name}
+                      </h4>
+                      <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
+                        {preset.bpm} BPM • {preset.tracks.length} Tracks
                       </div>
-
-                      <div className="absolute top-1/2 -translate-y-1/2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (onTogglePreview) onTogglePreview(preset.id);
-                          }}
-                          className={`w-6 h-6 bg-white dark:bg-zinc-950 shadow-sm border border-zinc-100 dark:border-zinc-800 dark:border-zinc-200 rounded flex items-center justify-center transition-all hover:scale-110 shrink-0 z-20 ${previewingClipId === preset.id ? 'text-blue-500' : 'text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 dark:text-zinc-200'}`}
-                          title={previewingClipId === preset.id ? 'Stop Preview' : 'Preview Clip'}
-                          aria-label={previewingClipId === preset.id ? 'Stop preview' : 'Preview clip'}
-                        >
-                          {previewingClipId === preset.id ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
-                          ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                          )}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddClip(0, preset.eq, preset.name);
-                          }}
-                          className="w-6 h-6 bg-white dark:bg-zinc-950 shadow-sm border border-zinc-100 dark:border-zinc-800 dark:border-zinc-200 rounded flex items-center justify-center transition-all hover:scale-110 shrink-0 z-20 text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 dark:text-zinc-200"
-                          title="Add to Track 1"
-                          aria-label={`Add ${preset.name} to Track 1`}
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {projectPresets.map((preset, idx) => (
-                  <div
-                    key={`${preset.name}-${idx}`}
-                    className="bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl p-4 transition-colors cursor-pointer group"
-                    onClick={() => onLoadProjectPreset(preset)}
-                  >
-                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 mb-1">{preset.name}</h4>
-                    <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mb-3">
-                      {preset.bpm} BPM • {preset.tracks.length} Tracks
-                    </div>
-                    <button className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 group-hover:border-zinc-300 dark:group-hover:border-zinc-700 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 text-xs font-bold py-2 rounded-lg transition-colors">
-                      Load Project
                     </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <div
-          className="flex flex-col items-center py-6 h-full cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900 dark:bg-zinc-100 transition-colors"
-          onClick={onShow}
-          title="Show Library"
-        >
-          <PanelLeft className="w-4 h-4 text-zinc-400 mb-6" />
-          <div className="flex-1 flex items-start justify-center">
-            <span className="[writing-mode:vertical-lr] rotate-180 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-              Sound Library
-            </span>
-          </div>
-        </div>
-      )}
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="collapsed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center py-8 gap-6"
+          >
+            <button
+              onClick={onShow}
+              className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-all duration-300"
+              title="Show Library"
+            >
+              <PanelLeft className="w-5 h-5" />
+            </button>
+            <div className="w-px h-12 bg-black/5 dark:bg-white/5"></div>
+            <Layers className="w-5 h-5 text-zinc-300 dark:text-zinc-700" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

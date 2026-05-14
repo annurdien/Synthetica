@@ -36,7 +36,6 @@ const MathEditorInner = ({
           spaceBehavesLikeTab: true,
           leftRightIntoCmdGoes: 'up',
           restrictMismatchedBrackets: true,
-          sumStartsWithAutoCalc: true,
           supSubsRequireOperand: true,
           charsThatBreakOutOfSupSub: '+-=<>',
           autoSubscriptNumerals: true,

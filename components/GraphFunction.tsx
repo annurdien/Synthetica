@@ -109,8 +109,10 @@ export function GraphFunction({
 
       const paddingLeft = 60;
       const paddingBottom = 40;
-      const graphWidth = width - paddingLeft;
-      const graphHeight = height - paddingBottom;
+      const paddingTop = 40;
+      const paddingRight = 40;
+      const graphWidth = width - paddingLeft - paddingRight;
+      const graphHeight = height - paddingBottom - paddingTop;
 
       const duration = durationRef.current;
       const currentPage = Math.floor(currentTime / duration);
@@ -127,14 +129,14 @@ export function GraphFunction({
       const ySteps = 4;
       for (let i = 0; i <= ySteps; i++) {
         const val = 1 - (i / ySteps) * 2;
-        const y = (i / ySteps) * graphHeight;
+        const y = paddingTop + (i / ySteps) * graphHeight;
 
         ctx.beginPath();
         ctx.moveTo(paddingLeft, y);
-        ctx.lineTo(width, y);
+        ctx.lineTo(width - paddingRight, y);
         ctx.stroke();
 
-        ctx.fillText(val.toFixed(1), paddingLeft - 10, Math.max(10, Math.min(graphHeight - 10, y)));
+        ctx.fillText(val.toFixed(1), paddingLeft - 10, Math.max(paddingTop + 10, Math.min(paddingTop + graphHeight - 10, y)));
       }
 
       ctx.textAlign = 'center';
@@ -151,23 +153,23 @@ export function GraphFunction({
         const x = paddingLeft + ((t - startT) / duration) * graphWidth;
 
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, graphHeight);
+        ctx.moveTo(x, paddingTop);
+        ctx.lineTo(x, paddingTop + graphHeight);
         ctx.stroke();
 
-        ctx.fillText(`${t.toFixed(2)}s`, x, graphHeight + 10);
+        ctx.fillText(`${t.toFixed(2)}s`, x, paddingTop + graphHeight + 15);
       }
 
       ctx.strokeStyle = '#e4e4e7';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(paddingLeft, graphHeight / 2);
-      ctx.lineTo(width, graphHeight / 2);
+      ctx.moveTo(paddingLeft, paddingTop + graphHeight / 2);
+      ctx.lineTo(width - paddingRight, paddingTop + graphHeight / 2);
       ctx.stroke();
 
       ctx.save();
       ctx.beginPath();
-      ctx.rect(paddingLeft, 0, graphWidth, graphHeight);
+      ctx.rect(paddingLeft, paddingTop, graphWidth, graphHeight);
       ctx.clip();
 
       ctx.strokeStyle = color;
@@ -181,7 +183,7 @@ export function GraphFunction({
         let v = fn(t, beat);
         if (!isFinite(v)) v = 0;
 
-        const y = graphHeight / 2 - (v * graphHeight / 2.5);
+        const y = paddingTop + graphHeight / 2 - (v * graphHeight / 2.5);
         const x = paddingLeft + i;
 
         if (i === 0) ctx.moveTo(x, y);
@@ -194,13 +196,13 @@ export function GraphFunction({
         const currentBeat = currentTime * (bpm / 60);
         let currentV = fn(currentTime, currentBeat);
         if (!isFinite(currentV)) currentV = 0;
-        const tracerY = graphHeight / 2 - (currentV * graphHeight / 2.5);
+        const tracerY = paddingTop + graphHeight / 2 - (currentV * graphHeight / 2.5);
 
         ctx.beginPath();
         ctx.strokeStyle = `${color}80`;
         ctx.lineWidth = 2;
-        ctx.moveTo(tracerX, 0);
-        ctx.lineTo(tracerX, graphHeight);
+        ctx.moveTo(tracerX, paddingTop);
+        ctx.lineTo(tracerX, paddingTop + graphHeight);
         ctx.stroke();
 
         ctx.beginPath();

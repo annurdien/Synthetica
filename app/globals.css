@@ -1,3 +1,58 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Prism Dark Mode Overrides */
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string {
+  background: transparent !important;
+  color: #89ddff !important;
+}
+
+.dark .token.number {
+  color: #f78c6c !important;
+}
+
+.dark .token.function, 
+.dark .token.class-name {
+  color: #82aaff !important;
+}
+
+.dark .token.keyword {
+  color: #c792ea !important;
+}
+
+.dark .token.punctuation {
+  color: #89ddff !important;
+}
+
+.dark .token.string {
+  color: #c3e88d !important;
+}
+
+.dark .token.property, 
+.dark .token.tag, 
+.dark .token.boolean, 
+.dark .token.constant, 
+.dark .token.symbol, 
+.dark .token.deleted {
+  color: #f07178 !important;
+}
+
+.dark .token.selector, 
+.dark .token.attr-name, 
+.dark .token.char, 
+.dark .token.builtin, 
+.dark .token.inserted {
+  color: #c3e88d !important;
+}
+
+.dark .token.comment, 
+.dark .token.prolog, 
+.dark .token.doctype, 
+.dark .token.cdata {
+  color: #546e7a !important;
+}

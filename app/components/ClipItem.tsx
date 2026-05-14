@@ -13,7 +13,7 @@ export const ClipItem = memo(function ClipItem({ clip, totalBeats, isSelected, o
   return (
     <div
       onPointerDown={(e) => onPointerDown(e, clip.id, 'move')}
-      className={`absolute top-2 bottom-2 rounded shadow-sm text-white overflow-hidden cursor-grab active:cursor-grabbing flex flex-col justify-between transition-none ${isSelected ? 'ring-2 ring-black z-10' : 'hover:brightness-110'}`}
+      className={`absolute top-2 bottom-2 rounded shadow-sm text-white dark:text-zinc-900 overflow-hidden cursor-grab active:cursor-grabbing flex flex-col justify-between transition-none ${isSelected ? 'ring-2 ring-black z-10' : 'hover:brightness-110'}`}
       style={{
         left: `${(clip.startBeat / totalBeats) * 100}%`,
         width: `${(clip.lengthBeats / totalBeats) * 100}%`,

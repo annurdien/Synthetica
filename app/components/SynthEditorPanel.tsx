@@ -53,7 +53,7 @@ export function SynthEditorPanel({
   };
 
   return (
-    <div className="mb-6 p-4 md:p-8 bg-white border border-zinc-200 rounded-2xl flex flex-col gap-4 shadow-sm shrink-0">
+    <div className="mb-6 p-4 md:p-8 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-3xl flex flex-col gap-4 shadow-lg shrink-0">
       <div className="flex justify-between items-center relative z-20">
         <h2 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1 md:gap-2">
           <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Sound </span>Editor
@@ -61,10 +61,10 @@ export function SynthEditorPanel({
         <div className="flex items-center gap-1.5 md:gap-2 relative">
           <button
             onClick={onTogglePlay}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm ${
               isPlaying
-                ? 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                : 'bg-blue-500 text-white hover:bg-blue-600'
             }`}
             title={isPlaying ? 'Stop' : 'Play Live'}
             aria-label={isPlaying ? 'Stop live preview' : 'Play live preview'}
@@ -75,7 +75,7 @@ export function SynthEditorPanel({
           <div className="relative">
             <button
               onClick={onToggleSavePopup}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors border ${isSavePopupOpen ? 'bg-zinc-100 text-zinc-800 border-zinc-200' : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-100'}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm border ${isSavePopupOpen ? 'bg-zinc-900/10 dark:bg-white/10 text-zinc-900 dark:text-white border-transparent' : 'bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border-black/5 dark:border-white/10 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700'}`}
               title="Save to Library"
               aria-label="Save to library"
             >
@@ -83,8 +83,8 @@ export function SynthEditorPanel({
             </button>
 
             {isSavePopupOpen && (
-              <div className="absolute top-full right-0 mt-2 p-3 bg-white border border-zinc-200 rounded-xl shadow-xl flex flex-col gap-2 w-64 origin-top-right">
-                <div className="flex items-center gap-1.5 w-full bg-zinc-50 border border-zinc-200 rounded-xl p-1.5 focus-within:border-zinc-400 focus-within:bg-white transition-all">
+              <div className="absolute top-full right-0 mt-2 p-3 bg-white dark:bg-zinc-950 border border-zinc-100/50 dark:border-zinc-800/30/30 rounded-xl shadow-xl flex flex-col gap-2 w-64 origin-top-right">
+                <div className="flex items-center gap-1.5 w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl p-1.5 focus-within:bg-white dark:focus-within:bg-zinc-900 transition-all shadow-inner">
                   <input
                     type="text"
                     placeholder="Give it a name..."
@@ -101,7 +101,7 @@ export function SynthEditorPanel({
                   <button
                     onClick={handleSave}
                     disabled={!saveName.trim()}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white border border-zinc-200 shadow-sm hover:shadow-md focus:outline-none text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 transition-all whitespace-nowrap"
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-zinc-950 border border-zinc-100/50 dark:border-zinc-800/30/30 shadow-sm hover:shadow-md focus:outline-none text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 disabled:opacity-50 transition-all whitespace-nowrap"
                   >
                     Save
                   </button>
@@ -111,7 +111,7 @@ export function SynthEditorPanel({
           </div>
 
           <button
-            className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center bg-zinc-50 border border-zinc-200 text-zinc-400 hover:text-zinc-800 transition"
+            className="md:hidden w-8 h-8 rounded-full flex items-center justify-center bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-sm text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100 transition"
             onClick={onShowLibrary}
             title="Show Library"
             aria-label="Show library"
@@ -120,7 +120,7 @@ export function SynthEditorPanel({
           </button>
 
           <button
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition border ${editorMode === 'desmos' ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:text-zinc-600'}`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm border ${editorMode === 'desmos' ? 'bg-indigo-500 border-indigo-600 text-white' : 'bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border-black/5 dark:border-white/10 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
             onClick={onToggleEditorMode}
             title={editorMode === 'desmos' ? 'Switch to Code Editor' : 'Switch to Math Editor'}
             aria-label={editorMode === 'desmos' ? 'Switch to code editor' : 'Switch to math editor'}
@@ -131,7 +131,7 @@ export function SynthEditorPanel({
       </div>
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
         <div className="text-3xl sm:text-4xl font-serif italic text-blue-500 shrink-0 mt-0 sm:mt-3 select-none">f(t) =</div>
-        <div className="flex-1 min-w-0 relative w-full group max-h-[300px] overflow-y-auto bg-zinc-50 focus-within:bg-white border rounded-xl shadow-inner transition-colors focus-within:-outline-offset-2 focus-within:outline-blue-500 overflow-hidden flex items-center">
+        <div className="flex-1 min-w-0 relative w-full group max-h-[300px] overflow-y-auto bg-black/5 dark:bg-white/5 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors overflow-hidden flex items-center">
           {editorMode === 'desmos' ? (
             <div className="w-full px-4 py-6">
               <MathEditor value={latexEquation} onChange={onLatexChange} onJsChange={onLatexJsChange} />
@@ -143,6 +143,7 @@ export function SynthEditorPanel({
               highlight={(code) => Prism.highlight(code, Prism.languages.javascript, 'javascript')}
               padding={24}
               className="w-full text-xl sm:text-2xl md:text-3xl font-mono leading-relaxed outline-none break-all"
+              textareaClassName="outline-none focus:outline-none"
               style={{
                 fontFamily: '"Fira Code", "JetBrains Mono", monospace',
                 minHeight: '100px',
@@ -159,11 +160,11 @@ export function SynthEditorPanel({
       </div>
       <div className="mt-3 flex flex-col gap-4 ml-0 md:ml-[88px]">
         <div className="flex gap-2 flex-wrap">
-          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 border border-zinc-100 px-2.5 py-1.5 rounded-md">
-            Functions: <span className="text-zinc-500 font-mono lowercase">sin, cos, tan, abs, floor, random, sign</span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100/50 dark:border-zinc-800/30/50 px-2.5 py-1.5 rounded-md">
+            Functions: <span className="text-zinc-500 dark:text-zinc-400 font-mono lowercase">sin, cos, tan, abs, floor, random, sign</span>
           </span>
-          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 border border-zinc-100 px-2.5 py-1.5 rounded-md">
-            Variables: <span className="text-zinc-500 font-mono lowercase">t, beat</span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100/50 dark:border-zinc-800/30/50 px-2.5 py-1.5 rounded-md">
+            Variables: <span className="text-zinc-500 dark:text-zinc-400 font-mono lowercase">t, beat</span>
           </span>
         </div>
       </div>

@@ -21,23 +21,23 @@ export function SynthVisualizerPanel({
   isPlaying,
 }: SynthVisualizerPanelProps) {
   return (
-    <div className="flex-1 bg-white border border-zinc-200 rounded-2xl relative overflow-hidden flex flex-col shadow-sm min-h-[300px]">
-      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex items-center bg-white/90 backdrop-blur border border-zinc-200 rounded-lg overflow-hidden shadow-sm p-1">
+    <div className="flex-1 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-3xl relative overflow-hidden flex flex-col shadow-lg min-h-[300px]">
+      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex items-center bg-white/50 dark:bg-zinc-800/50 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-sm p-1">
         <button
           onClick={() => onSetSynthVisType('graph')}
-          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-md transition ${synthVisType === 'graph' ? 'bg-zinc-100 text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}
+          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition ${synthVisType === 'graph' ? 'bg-white shadow-sm dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
         >
           Graph
         </button>
         <button
           onClick={() => onSetSynthVisType('oscilloscope')}
-          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-md transition ${synthVisType === 'oscilloscope' ? 'bg-zinc-100 text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}
+          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition ${synthVisType === 'oscilloscope' ? 'bg-white shadow-sm dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
         >
           Oscillo
         </button>
         <button
           onClick={() => onSetSynthVisType('spectrum')}
-          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-md transition ${synthVisType === 'spectrum' ? 'bg-zinc-100 text-zinc-800' : 'text-zinc-400 hover:text-zinc-600'}`}
+          className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition ${synthVisType === 'spectrum' ? 'bg-white shadow-sm dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
         >
           Spectrum
         </button>

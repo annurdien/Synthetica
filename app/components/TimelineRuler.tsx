@@ -9,13 +9,13 @@ interface TimelineRulerProps {
 
 export function TimelineRuler({ totalBeats, playheadRef, onScrubStart }: TimelineRulerProps) {
   return (
-    <div className="flex h-8 bg-zinc-100/50 border-b border-zinc-200 sticky top-0 z-40 shrink-0 cursor-ew-resize" onPointerDown={onScrubStart}>
-      <div className="w-20 md:w-32 border-r border-zinc-200 shrink-0 bg-zinc-50 pointer-events-none sticky left-0 z-50"></div>
+    <div className="flex h-8 bg-zinc-50 dark:bg-zinc-900 border-b border-black/5 dark:border-white/10 sticky top-0 z-40 shrink-0 cursor-ew-resize" onPointerDown={onScrubStart}>
+      <div className="w-20 md:w-32 border-r border-black/5 dark:border-white/10 shrink-0 bg-zinc-50 dark:bg-zinc-900 pointer-events-none sticky left-0 z-50"></div>
       <div className="flex-1 relative pointer-events-auto" id="timeline-ruler">
         {Array.from({ length: totalBeats }).map((_, i) => (
           <div
             key={i}
-            className="absolute top-0 bottom-0 border-l border-zinc-200 text-[10px] text-zinc-400 pl-1 pt-1 font-mono pointer-events-none select-none"
+            className="absolute top-0 bottom-0 border-l border-black/5 dark:border-white/10 text-[10px] text-zinc-400 pl-1 pt-1 font-mono pointer-events-none select-none"
             style={{ left: `${(i / totalBeats) * 100}%` }}
           >
             {i}

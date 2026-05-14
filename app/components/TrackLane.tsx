@@ -35,12 +35,11 @@ export const TrackLane = memo(function TrackLane({
     <div
       data-trackid={track.id}
       style={{ height: track.height }}
-      className={`flex border-b border-zinc-100 group relative ${track.muted ? 'bg-zinc-100 opacity-50' : 'bg-white'}`}
+      className={`flex border-b border-zinc-100 dark:border-zinc-800/50 group relative ${track.muted ? 'bg-zinc-100 dark:bg-zinc-800 opacity-50' : 'bg-white dark:bg-zinc-950'}`}
     >
-      {/* Track header */}
-      <div className="w-20 md:w-32 border-r border-zinc-100 flex flex-col justify-center shrink-0 relative bg-zinc-50 sticky left-0 z-20 overflow-hidden px-1.5 md:px-2 py-1 gap-1">
+      <div className="w-20 md:w-32 border-r border-black/5 dark:border-white/10 flex flex-col justify-center shrink-0 relative bg-zinc-50 dark:bg-zinc-900 sticky left-0 z-20 overflow-hidden px-1.5 md:px-2 py-1 gap-1">
         {/* Row 1: Track name */}
-        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-400 truncate">
+        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 truncate">
           {track.name}
         </span>
 
@@ -48,7 +47,7 @@ export const TrackLane = memo(function TrackLane({
         <div className="flex items-center gap-1">
           <button
             onClick={() => onToggleMute(track.id)}
-            className={`w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded border transition-colors shrink-0 ${track.muted ? 'bg-red-100 border-red-300 text-red-500' : 'bg-white border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:border-zinc-300'}`}
+            className={`w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-md border-0 transition-colors shrink-0 ${track.muted ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300' : 'bg-transparent text-zinc-400 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}`}
             aria-label={track.muted ? `Unmute ${track.name}` : `Mute ${track.name}`}
             title={track.muted ? 'Unmute' : 'Mute'}
           >
@@ -60,14 +59,7 @@ export const TrackLane = memo(function TrackLane({
             max={100}
             value={volumePercent}
             onChange={(e) => onSetTrackVolume(track.id, parseInt(e.target.value) / 100)}
-            className="flex-1 min-w-0 h-1 cursor-pointer"
-            style={{
-              WebkitAppearance: 'none',
-              appearance: 'none',
-              background: `linear-gradient(to right, ${track.muted ? '#d4d4d8' : '#71717a'} ${volumePercent}%, #e4e4e7 ${volumePercent}%)`,
-              borderRadius: '2px',
-              height: '3px',
-            }}
+            className={`flex-1 min-w-0 h-1.5 cursor-pointer rounded-full accent-zinc-400 dark:accent-zinc-600`}
             aria-label={`Volume for ${track.name}`}
           />
           <span className="text-[8px] text-zinc-400 font-mono tabular-nums w-5 md:w-6 text-right shrink-0">{volumePercent}</span>
@@ -76,7 +68,7 @@ export const TrackLane = memo(function TrackLane({
         {/* Add clip button (top-right corner, shows on hover) */}
         <button
           onClick={() => onAddClip(track.id)}
-          className="opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-1 top-1 w-4 h-4 md:w-5 md:h-5 rounded bg-white border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:border-zinc-300 transition-opacity"
+          className="opacity-100 md:opacity-0 group-hover:opacity-100 absolute right-1 top-1 w-4 h-4 md:w-5 md:h-5 rounded-md bg-white dark:bg-zinc-800 border-0 shadow-sm flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-opacity"
           title="Add Clip"
           aria-label={`Add clip to ${track.name}`}
         >
@@ -86,8 +78,8 @@ export const TrackLane = memo(function TrackLane({
 
       {/* Clip area */}
       <div
-        className="flex-1 relative hover:bg-zinc-50/30 transition-colors"
-        style={{ backgroundImage: 'linear-gradient(to right, #f4f4f5 1px, transparent 1px)', backgroundSize: `calc(100% / ${totalBeats}) 100%` }}
+        className="flex-1 relative hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50/30 transition-colors text-black/5 dark:text-white/10"
+        style={{ backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px)', backgroundSize: `calc(100% / ${totalBeats}) 100%` }}
         onDragOver={(e) => {
           e.preventDefault();
           e.currentTarget.classList.add('bg-blue-50/50');

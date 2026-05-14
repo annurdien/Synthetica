@@ -682,7 +682,7 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="w-full h-screen bg-white flex flex-col font-sans text-zinc-900 overflow-hidden">
+    <main className="w-full h-screen bg-zinc-50 dark:bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-100 via-zinc-50 to-white dark:from-zinc-900 dark:via-zinc-950 dark:to-black flex flex-col font-sans text-zinc-900 dark:text-zinc-100 overflow-hidden">
       <AppHeader
         activeTab={activeTab}
         onSelectSynth={handleSelectSynth}
@@ -698,7 +698,7 @@ export default function Page() {
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         {activeTab === 'synth' ? (
           <>
-            <div className="flex-1 bg-zinc-50 flex flex-col p-4 md:p-8 relative overflow-y-auto min-w-0">
+            <div className="flex-1 bg-transparent flex flex-col p-4 md:p-8 relative overflow-y-auto min-w-0">
               <SynthEditorPanel
                 isPlaying={isPlaying}
                 onTogglePlay={togglePlay}
@@ -757,7 +757,7 @@ export default function Page() {
               onShow={() => setIsLibraryVisible(true)}
             />
 
-            <div className="flex-1 bg-zinc-50 flex flex-col relative overflow-hidden min-w-0">
+            <div className="flex-1 bg-transparent flex flex-col relative overflow-hidden min-w-0">
               <TransportBar
                 isPlaying={isPlaying}
                 onRestart={restartTimeline}

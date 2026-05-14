@@ -52,7 +52,7 @@ export function ProducerTimeline({
   }, [clips]);
 
   return (
-    <div className="flex-1 overflow-auto relative flex flex-col bg-zinc-50" id="scroll-container">
+    <div className="flex-1 overflow-auto relative flex flex-col bg-zinc-50/50 dark:bg-zinc-950/50" id="scroll-container">
       <div style={{ width: `${(totalBeats / 32) * timelineZoom * 100}%` }} className="flex flex-col relative h-full shrink-0">
         <TimelineRuler totalBeats={totalBeats} playheadRef={playheadRef} onScrubStart={onScrubStart} />
 
@@ -73,11 +73,11 @@ export function ProducerTimeline({
             />
           ))}
 
-          <div className="flex h-10 border-b border-zinc-100 bg-zinc-50/30">
-            <div className="w-20 md:w-32 border-r border-zinc-100 flex items-center justify-center shrink-0 sticky left-0 z-20">
+          <div className="flex h-10 border-b border-black/5 dark:border-white/10 bg-transparent">
+            <div className="w-20 md:w-32 border-r border-black/5 dark:border-white/10 flex items-center justify-center shrink-0 sticky left-0 z-20 bg-zinc-50 dark:bg-zinc-900">
               <button
                 onClick={onAddTrack}
-                className="w-6 h-6 flex items-center justify-center rounded text-zinc-400 hover:bg-zinc-200/50 hover:text-zinc-800 transition-colors"
+                className="w-6 h-6 flex items-center justify-center rounded text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700/50 hover:text-zinc-800 dark:hover:text-zinc-100 transition-colors"
                 title="Add Track"
                 aria-label="Add track"
               >

@@ -260,6 +260,11 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
     [1, 1, 1, 0],
   );
 
+  const displayIntro = useTransform(
+    scrollYProgress,
+    (v) => (v > PHASE.intro[1] + 0.05 ? 'none' : 'block')
+  );
+
   const opModTitle = useTransform(
     scrollYProgress,
     [PHASE.modulator[0], PHASE.modulator[0] + 0.05],
@@ -331,7 +336,7 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
       {/* Phase 1: The Seed */}
       <motion.section
         aria-label="Phase 1: The Seed"
-        style={{ opacity: opIntro }}
+        style={{ opacity: opIntro, display: displayIntro }}
         className="absolute inset-0 text-white mix-blend-difference"
       >
         <div className="absolute left-6 top-6 font-mono text-xs uppercase tracking-widest opacity-80 md:left-12 md:top-12 md:text-sm">

@@ -131,9 +131,9 @@ export function SynthEditorPanel({
       </div>
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
         <div className="text-3xl sm:text-4xl font-serif italic text-blue-500 shrink-0 mt-0 sm:mt-3 select-none">f(t) =</div>
-        <div className="flex-1 min-w-0 relative w-full group max-h-[300px] overflow-y-auto bg-black/5 dark:bg-white/5 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors overflow-hidden flex items-center">
+        <div className="flex-1 min-w-0 relative w-full group max-h-[300px] overflow-y-auto bg-black/5 dark:bg-white/5 focus-within:bg-white dark:focus-within:bg-zinc-900 border border-black/5 dark:border-white/10 focus-within:border-black/20 dark:focus-within:border-white/20 rounded-xl shadow-inner transition-colors flex items-start">
           {editorMode === 'desmos' ? (
-            <div className="w-full px-4 py-6">
+            <div className="w-full px-4 py-6 flex items-center min-h-[100px]">
               <MathEditor value={latexEquation} onChange={onLatexChange} onJsChange={onLatexJsChange} />
             </div>
           ) : (

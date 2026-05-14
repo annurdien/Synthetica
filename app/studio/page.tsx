@@ -703,7 +703,12 @@ export default function Page() {
                 isPlaying={isPlaying}
                 onTogglePlay={togglePlay}
                 editorMode={editorMode}
-                onToggleEditorMode={() => setEditorMode((prev) => (prev === 'desmos' ? 'standard' : 'desmos'))}
+                onToggleEditorMode={() => {
+                  if (isPlaying) {
+                    togglePlay();
+                  }
+                  setEditorMode((prev) => (prev === 'desmos' ? 'standard' : 'desmos'));
+                }}
                 equation={equation}
                 onEquationChange={setEquation}
                 latexEquation={latexEquation}

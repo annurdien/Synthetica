@@ -15,10 +15,10 @@ const VIEWBOX_SIZE = 1000;
 const CENTER = VIEWBOX_SIZE / 2;
 
 const PHASE = {
-  intro: [0, 0.15],
-  modulator: [0.15, 0.45],
-  shatter: [0.45, 0.75],
-  resolution: [0.75, 1],
+  intro: [0, 0.3],
+  modulator: [0.3, 0.55],
+  shatter: [0.55, 0.8],
+  resolution: [0.8, 1],
 } as const;
 
 function clamp(value: number, min: number, max: number) {
@@ -112,12 +112,12 @@ function MathReactor({ scrollYProgress, containerRef }: MathReactorProps) {
     const t = time / 1000;
     const scroll = scrollYProgress.get();
 
-    const modProg = clamp((scroll - 0.12) / 0.28, 0, 1);
-    const transProg = clamp((scroll - 0.45) / 0.2, 0, 1);
-    const envProg = clamp((scroll - 0.7) / 0.2, 0, 1);
+    const modProg = clamp((scroll - 0.28) / 0.25, 0, 1);
+    const transProg = clamp((scroll - 0.55) / 0.2, 0, 1);
+    const envProg = clamp((scroll - 0.75) / 0.22, 0, 1);
 
     const shatterProg =
-      1 - Math.abs((clamp(scroll, 0.45, 0.65) - 0.55) / 0.1);
+      1 - Math.abs((clamp(scroll, 0.55, 0.8) - 0.675) / 0.125);
 
     const morph = easeInOut(transProg);
 
@@ -256,8 +256,8 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
 
   const opIntro = useTransform(
     scrollYProgress,
-    [0, 0.05, 0.1, PHASE.intro[1]],
-    [1, 1, 1, 0],
+    [0, 0.08, 0.25, PHASE.intro[1]],
+    [0, 1, 1, 0],
   );
 
   const displayIntro = useTransform(
@@ -267,38 +267,48 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
 
   const opModTitle = useTransform(
     scrollYProgress,
-    [PHASE.modulator[0], PHASE.modulator[0] + 0.05],
-    [0, 1],
+    [PHASE.modulator[0], PHASE.modulator[0] + 0.05, PHASE.modulator[1] - 0.05, PHASE.modulator[1]],
+    [0, 1, 1, 0],
+  );
+
+  const displayModulator = useTransform(
+    scrollYProgress,
+    (v) => (v < PHASE.modulator[0] - 0.05 || v > PHASE.modulator[1] + 0.05 ? 'none' : 'block')
   );
 
   const opModInfo = useTransform(
     scrollYProgress,
-    [0.25, 0.3, 0.4, PHASE.modulator[1]],
+    [PHASE.modulator[0] + 0.05, PHASE.modulator[0] + 0.12, PHASE.modulator[1] - 0.05, PHASE.modulator[1]],
     [0, 1, 1, 0],
   );
 
   const xModTitle = useTransform(
     scrollYProgress,
     [PHASE.modulator[0], PHASE.modulator[1]],
-    shouldReduceMotion ? ['0vw', '0vw'] : ['100vw', '-150vw'],
+    shouldReduceMotion ? ['0vw', '0vw'] : ['120vw', '-250vw'],
   );
 
   const opShatterTitle = useTransform(
     scrollYProgress,
-    [PHASE.shatter[0], PHASE.shatter[0] + 0.05],
-    [0, 1],
+    [PHASE.shatter[0], PHASE.shatter[0] + 0.05, PHASE.shatter[1] - 0.05, PHASE.shatter[1]],
+    [0, 1, 1, 0],
+  );
+
+  const displayShatter = useTransform(
+    scrollYProgress,
+    (v) => (v < PHASE.shatter[0] - 0.05 || v > PHASE.shatter[1] + 0.05 ? 'none' : 'block')
   );
 
   const opShatterInfo = useTransform(
     scrollYProgress,
-    [0.55, 0.6, 0.7, PHASE.shatter[1]],
+    [PHASE.shatter[0] + 0.05, PHASE.shatter[0] + 0.12, PHASE.shatter[1] - 0.05, PHASE.shatter[1]],
     [0, 1, 1, 0],
   );
 
   const yShatterTitle = useTransform(
     scrollYProgress,
     [PHASE.shatter[0], PHASE.shatter[1]],
-    shouldReduceMotion ? ['0vh', '0vh'] : ['60vh', '-240vh'],
+    shouldReduceMotion ? ['0vh', '0vh'] : ['100vh', '-300vh'],
   );
 
   const yShatterInfo = useTransform(
@@ -309,20 +319,25 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
 
   const opEnvTitle = useTransform(
     scrollYProgress,
-    [PHASE.resolution[0], 0.8, 0.95, PHASE.resolution[1]],
-    [0, 1, 1, 0],
+    [PHASE.resolution[0], PHASE.resolution[0] + 0.05, 1.0],
+    [0, 1, 1],
+  );
+
+  const displayResolution = useTransform(
+    scrollYProgress,
+    (v) => (v < PHASE.resolution[0] - 0.05 ? 'none' : 'block')
   );
 
   const opEnvInfo = useTransform(
     scrollYProgress,
-    [0.85, 0.9, 0.95, PHASE.resolution[1]],
-    [0, 1, 1, 0],
+    [PHASE.resolution[0] + 0.03, PHASE.resolution[0] + 0.08, 1.0],
+    [0, 1, 1],
   );
 
   const yEnvTitle = useTransform(
     scrollYProgress,
     [PHASE.resolution[0], PHASE.resolution[1]],
-    shouldReduceMotion ? ['0vh', '0vh'] : ['5vh', '-5vh'],
+    shouldReduceMotion ? ['0vh', '0vh'] : ['2vh', '-2vh'],
   );
 
   return (
@@ -337,7 +352,7 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
       <motion.section
         aria-label="Phase 1: The Seed"
         style={{ opacity: opIntro, display: displayIntro }}
-        className="absolute inset-0 text-white mix-blend-difference"
+        className="absolute inset-0 text-zinc-900 dark:text-white"
       >
         <div className="absolute left-6 top-6 font-mono text-xs uppercase tracking-widest opacity-80 md:left-12 md:top-12 md:text-sm">
           Phase 01
@@ -355,13 +370,14 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
       </motion.section>
 
       {/* Phase 2: The Modulator */}
-      <section
+      <motion.section
         aria-label="Phase 2: The Modulator"
+        style={{ display: displayModulator }}
         className="absolute inset-0"
       >
         <motion.div
           style={{ opacity: opModTitle, x: xModTitle }}
-          className="absolute left-0 top-[20%] whitespace-nowrap text-white mix-blend-difference"
+          className="absolute left-0 top-[20%] whitespace-nowrap text-zinc-900 dark:text-white"
         >
           <h2 className="font-serif text-[15vw] uppercase leading-none tracking-tighter opacity-90">
             The Modulator
@@ -370,7 +386,7 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
 
         <motion.div
           style={{ opacity: opModInfo }}
-          className="absolute bottom-10 right-6 max-w-sm text-right text-zinc-900 drop-shadow-[0_0_8px_rgba(255,255,255,1)] dark:text-zinc-100 dark:drop-shadow-[0_0_8px_rgba(0,0,0,1)] md:bottom-24 md:right-24 md:max-w-md"
+          className="absolute bottom-10 right-6 max-w-sm text-right text-zinc-900 dark:text-zinc-100 md:bottom-24 md:right-24 md:max-w-md"
         >
           <p className="mb-5 font-sans text-base font-light leading-snug sm:text-xl md:text-3xl">
             We inject a modulator. The geometry violently folds in on
@@ -381,11 +397,12 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
             R(θ) = sin(ωcθ + I · sin(ωmθ))
           </div>
         </motion.div>
-      </section>
+      </motion.section>
 
       {/* Phase 3: The Shatter */}
-      <section
+      <motion.section
         aria-label="Phase 3: The Chaos"
+        style={{ display: displayShatter }}
         className="absolute inset-0"
       >
         <motion.div
@@ -394,7 +411,7 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
             y: yShatterTitle,
             rotate: -90,
           }}
-          className="absolute left-6 top-full origin-bottom-left whitespace-nowrap text-white mix-blend-difference md:left-60"
+          className="absolute left-6 top-full origin-bottom-left whitespace-nowrap text-zinc-900 dark:text-white md:left-60"
         >
           <span className="font-serif text-[12vh] uppercase leading-none tracking-tighter opacity-90">
             The Chaos
@@ -403,7 +420,7 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
 
         <motion.div
           style={{ opacity: opShatterInfo, y: yShatterInfo }}
-          className="absolute bottom-10 right-6 max-w-xs text-right text-zinc-900 drop-shadow-[0_0_8px_rgba(255,255,255,1)] dark:text-zinc-100 dark:drop-shadow-[0_0_8px_rgba(0,0,0,1)] md:bottom-24 md:right-24 md:max-w-sm"
+          className="absolute bottom-20 right-6 max-w-xs text-right text-zinc-900 dark:text-zinc-100 md:bottom-40 md:right-24 md:max-w-sm"
         >
           <p className="mb-5 font-sans text-base font-light leading-tight sm:text-xl md:text-3xl">
             The geometry spins out of control and mathematically
@@ -414,31 +431,34 @@ function NarrativeLayers({ scrollYProgress }: NarrativeLayersProps) {
             F(ω) = ∫ f(t) e<sup>-iωt</sup> dt
           </div>
         </motion.div>
-      </section>
+      </motion.section>
 
       {/* Phase 4: The Resolution */}
-      <section
+      <motion.section
         aria-label="Phase 4: The Resolution"
-        className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 pointer-events-none md:pb-14"
+        style={{ display: displayResolution }}
+        className="absolute inset-0 pointer-events-none"
       >
-        <motion.h2
-          style={{ opacity: opEnvTitle, y: yEnvTitle }}
-          className="mb-8 text-center font-serif text-5xl tracking-tight text-white mix-blend-difference md:text-8xl"
-        >
-          The Resolution
-        </motion.h2>
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-[10vh] md:pt-[12vh]">
+          <motion.h2
+            style={{ opacity: opEnvTitle, y: yEnvTitle }}
+            className="text-center font-serif text-5xl tracking-tight text-zinc-900 dark:text-white md:text-8xl uppercase"
+          >
+            The Resolution
+          </motion.h2>
+        </div>
 
         <motion.div
           style={{ opacity: opEnvInfo }}
-          className="text-zinc-900 drop-shadow-[0_0_8px_rgba(255,255,255,1)] dark:text-zinc-100 dark:drop-shadow-[0_0_8px_rgba(0,0,0,1)]"
+          className="absolute bottom-10 right-6 max-w-xs text-right text-zinc-900 dark:text-zinc-100 md:bottom-24 md:right-24 md:max-w-md"
         >
-          <p className="max-w-2xl text-center font-sans text-base font-light leading-relaxed opacity-90 sm:text-lg md:text-2xl">
+          <p className="font-sans text-base font-light leading-relaxed opacity-90 sm:text-lg md:text-3xl">
             The chaos collapses. An amplitude envelope bounds the
             energy, and algorithmic delays paint the acoustic space.
             The math becomes music.
           </p>
         </motion.div>
-      </section>
+      </motion.section>
     </div>
   );
 }

@@ -2,6 +2,40 @@ import type { Preset, ProjectPreset } from './types';
 
 export const PRESETS: Preset[] = [
   {
+    name: 'Tutorial: Your First Beat',
+    eq: `(
+  /* 
+   * TUTORIAL: MAKING A DRUM BEAT
+   * Math to sound works by creating repeating shapes (frequencies) over time.
+   * 
+   * 1. 't' is time in seconds. 'beat' is the current musical beat based on BPM.
+   * 2. 'beat % 1' produces a number that drops to 0 at every new beat.
+   * 3. 'exp(-10 * (beat % 1))' turns that drop into a sharp, punchy envelope.
+   * 4. 'sin(2 * PI * 50 * t)' generates a low 50Hz sub tone.
+   * 
+   * Combine them, and you get a kick drum playing on every beat!
+   * Try changing the '50' to '100' or the '-10' to '-2' and hear what happens.
+   */
+  sin(2 * PI * 50 * t) * exp(-10 * (beat % 1))
+)`,
+    bpm: 120,
+  },
+  {
+    name: 'Tutorial: Hi-Hats',
+    eq: `(
+  /*
+   * TUTORIAL 2: THE HI-HAT
+   * Hi-hats don't use clean sine waves; they use noise!
+   * 
+   * 1. 'random() * 2 - 1' generates harsh, random static (white noise).
+   * 2. '(beat * 4) % 1' triggers our envelope 4 times per beat (16th notes).
+   * 3. An even faster envelope (-25) makes it sound short and clicking.
+   */
+  (random() * 2 - 1) * exp(-25 * ((beat * 4) % 1)) * 0.2
+)`,
+    bpm: 120,
+  },
+  {
     name: 'Basic Sine Wave',
     eq: 'sin(2*PI*440*t) * 0.5',
     bpm: 120,

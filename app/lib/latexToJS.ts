@@ -5,6 +5,9 @@ export function latexToJS(latex: string): string {
     
     // Replace \cdot and \times
     js = js.replace(/\\cdot/g, '*').replace(/\\times/g, '*');
+
+    // Replace modulo operators
+    js = js.replace(/\\bmod/g, '%').replace(/\\mod/g, '%');
     
     // Replace constants
     js = js.replace(/\\pi/g, 'PI');

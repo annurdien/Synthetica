@@ -59,6 +59,12 @@ export function SynthEditorPanel({
           <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" /> <span className="hidden sm:inline">Sound </span>Editor
         </h2>
         <div className="flex items-center gap-1.5 md:gap-2 relative">
+          <a
+            href="/tutorial"
+            className="hidden sm:flex text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-blue-600 bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-900/10 dark:hover:bg-blue-900/20 px-3 py-1.5 rounded-full items-center gap-1 mr-2 transition-colors"
+          >
+            Open Tutorial
+          </a>
           <button
             onClick={onTogglePlay}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm ${

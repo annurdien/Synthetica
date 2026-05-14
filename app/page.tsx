@@ -73,6 +73,13 @@ export default function LandingPage() {
               onInitAnalyser={setAudioNodes} 
             />
           </div>
+
+          <div className="mt-8">
+             <a href="/tutorial" className="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 font-medium text-sm flex items-center gap-2 group transition-colors">
+               <span>New to this? Try the Interactive Beat Tutorial</span>
+               <ArrowDown className="w-4 h-4 -rotate-90 group-hover:translate-x-1 transition-transform" />
+             </a>
+          </div>
         </div>
 
       </section>

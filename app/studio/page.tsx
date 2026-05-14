@@ -80,12 +80,19 @@ export default function Page() {
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
   const timelineRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const playheadRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<HTMLSpanElement>(null);
   const timeOffsetRef = useRef<number>(0);
   const requestRef = useRef<number | null>(null);
   const syncTimerRef = useRef<number | null>(null);
   const pauseTimeRef = useRef<number>(0);
+  const timelineMetricsRef = useRef({
+    containerWidth: 0,
+    contentWidth: 0,
+    sidebarWidth: 0,
+    rightEdgeBuffer: 50,
+  });
 
   const isPlayingRef = useRef(isPlaying);
   const bpmRef = useRef(bpm);
@@ -102,6 +109,38 @@ export default function Page() {
   useEffect(() => {
     activeTabRef.current = activeTab;
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab !== 'producer') return;
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const updateMetrics = () => {
+      const containerWidth = scrollContainer.clientWidth;
+      if (containerWidth <= 0) return;
+
+      const contentWidth = containerWidth * (TOTAL_BEATS / 32) * timelineZoom;
+      const sidebarWidth = window.innerWidth >= 768 ? 128 : 80;
+
+      timelineMetricsRef.current = {
+        containerWidth,
+        contentWidth,
+        sidebarWidth,
+        rightEdgeBuffer: 50,
+      };
+    };
+
+    updateMetrics();
+
+    const resizeObserver = new ResizeObserver(updateMetrics);
+    resizeObserver.observe(scrollContainer);
+    window.addEventListener('resize', updateMetrics);
+
+    return () => {
+      window.removeEventListener('resize', updateMetrics);
+      resizeObserver.disconnect();
+    };
+  }, [activeTab, timelineZoom]);
 
   const updatePlayhead = useCallback(function updatePlayheadFn() {
     if (activeTabRef.current === 'producer' && isPlayingRef.current && audioCtxRef.current) {
@@ -121,23 +160,26 @@ export default function Page() {
         }
         
         // Auto-scroll logic to follow the seeker
-        const scrollContainer = document.getElementById('scroll-container');
+        const scrollContainer = scrollContainerRef.current;
         if (scrollContainer) {
-          const isDesktop = window.innerWidth >= 768;
-          const sidebarWidth = isDesktop ? 128 : 80; // w-32 or w-20
-          
-          // Calculate the true absolute pixel position of the playhead from the far left of the full content
-          const playheadAbsoluteX = sidebarWidth + (positionPercentage / 100) * (scrollContainer.scrollWidth - sidebarWidth);
-          
-          const containerWidth = scrollContainer.clientWidth;
-          const RIGHT_VISIBLE_EDGE = containerWidth - 50; // 50px buffer from the Clip Editor (right sidebar)
-          
-          // Continuous smooth sliding: lock the seeker to the right edge
-          // It will stay at 0 until the playhead reaches the right edge, then slide continuously
-          if (playheadAbsoluteX > RIGHT_VISIBLE_EDGE) {
-            scrollContainer.scrollLeft = playheadAbsoluteX - RIGHT_VISIBLE_EDGE;
-          } else {
-            scrollContainer.scrollLeft = 0;
+          const metrics = timelineMetricsRef.current;
+          const containerWidth = metrics.containerWidth || scrollContainer.clientWidth;
+          const contentWidth = metrics.contentWidth || scrollContainer.scrollWidth;
+          const sidebarWidth = metrics.sidebarWidth || (window.innerWidth >= 768 ? 128 : 80);
+          const rightEdgeBuffer = metrics.rightEdgeBuffer ?? 50;
+
+          if (containerWidth > 0 && contentWidth > 0) {
+            // Calculate the true absolute pixel position of the playhead from the far left of the full content
+            const playheadAbsoluteX = sidebarWidth + (positionPercentage / 100) * (contentWidth - sidebarWidth);
+            const rightVisibleEdge = containerWidth - rightEdgeBuffer;
+
+            // Continuous smooth sliding: lock the seeker to the right edge
+            // It will stay at 0 until the playhead reaches the right edge, then slide continuously
+            if (playheadAbsoluteX > rightVisibleEdge) {
+              scrollContainer.scrollLeft = playheadAbsoluteX - rightVisibleEdge;
+            } else {
+              scrollContainer.scrollLeft = 0;
+            }
           }
         }
       }
@@ -237,7 +279,7 @@ export default function Page() {
             newStart = Math.max(0, Math.min(TOTAL_BEATS - c.lengthBeats, newStart));
             
             let newTrackId = c.trackId;
-            const tracksContainer = document.getElementById('tracks-container');
+            const tracksContainer = timelineRef.current;
             if (tracksContainer) {
               const rect = tracksContainer.getBoundingClientRect();
               const relativeY = e.clientY - rect.top;
@@ -819,6 +861,7 @@ export default function Page() {
                   totalBeats={TOTAL_BEATS}
                   timelineZoom={timelineZoom}
                   timelineRef={timelineRef}
+                  scrollContainerRef={scrollContainerRef}
                   playheadRef={playheadRef}
                   onScrubStart={handleScrubStart}
                   onClipPointerDown={handlePointerDown}

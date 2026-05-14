@@ -1,5 +1,5 @@
 'use client';
-import { memo, type PointerEvent as ReactPointerEvent } from 'react';
+import { memo, useMemo, type PointerEvent as ReactPointerEvent } from 'react';
 import { Plus, Volume2, VolumeX, MoreVertical, SlidersHorizontal, Activity } from 'lucide-react';
 import { ClipItem } from '@/app/components/ClipItem';
 import type { Clip, Track } from '@/app/lib/types';
@@ -8,6 +8,8 @@ interface TrackLaneProps {
   track: Track;
   clips: Clip[];
   totalBeats: number;
+  visibleStartBeat: number;
+  visibleEndBeat: number;
   selectedClipId: string | null;
   onToggleMute: (trackId: number) => void;
   onSetTrackVolume: (trackId: number, volume: number) => void;
@@ -21,6 +23,8 @@ export const TrackLane = memo(function TrackLane({
   track,
   clips,
   totalBeats,
+  visibleStartBeat,
+  visibleEndBeat,
   selectedClipId,
   onToggleMute,
   onSetTrackVolume,
@@ -30,6 +34,17 @@ export const TrackLane = memo(function TrackLane({
   onResizeTrack,
 }: TrackLaneProps) {
   const volumePercent = Math.round((track.volume ?? 1) * 100);
+  const visibleClips = useMemo(() => {
+    const startBeat = Math.max(0, visibleStartBeat);
+    const endBeat = Math.max(startBeat, visibleEndBeat);
+    if (!Number.isFinite(startBeat) || !Number.isFinite(endBeat)) return clips;
+
+    return clips.filter((clip) => {
+      const clipStart = clip.startBeat;
+      const clipEnd = clip.startBeat + clip.lengthBeats;
+      return clipEnd >= startBeat && clipStart <= endBeat;
+    });
+  }, [clips, visibleStartBeat, visibleEndBeat]);
 
   return (
     <div
@@ -113,7 +128,7 @@ export const TrackLane = memo(function TrackLane({
           }
         }}
       >
-        {clips.map((clip) => (
+        {visibleClips.map((clip) => (
           <ClipItem
             key={clip.id}
             clip={clip}

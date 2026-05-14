@@ -1,9 +1,93 @@
 'use client';
-import { useMemo, type RefObject, type PointerEvent as ReactPointerEvent } from 'react';
+import { useMemo, useEffect, useState, type RefObject, type PointerEvent as ReactPointerEvent } from 'react';
 import { Plus, ListPlus } from 'lucide-react';
 import { TimelineRuler } from '@/app/components/TimelineRuler';
 import { TrackLane } from '@/app/components/TrackLane';
 import type { Clip, Track } from '@/app/lib/types';
+
+const OVERSCAN_BEATS = 8;
+
+interface TimelineViewport {
+  startBeat: number;
+  endBeat: number;
+  containerWidth: number;
+  contentWidth: number;
+  beatWidth: number;
+  scrollLeft: number;
+}
+
+function useTimelineViewport(
+  scrollContainerRef: RefObject<HTMLDivElement | null>,
+  totalBeats: number,
+  timelineZoom: number
+) {
+  const [viewport, setViewport] = useState<TimelineViewport | null>(null);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    let frame = 0;
+
+    const computeViewport = () => {
+      const containerWidth = scrollContainer.clientWidth;
+      if (containerWidth <= 0) return null;
+
+      const contentWidth = containerWidth * (totalBeats / 32) * timelineZoom;
+      const beatWidth = contentWidth / totalBeats;
+      const scrollLeft = scrollContainer.scrollLeft;
+      const startBeat = Math.max(0, Math.floor(scrollLeft / beatWidth) - OVERSCAN_BEATS);
+      const endBeat = Math.min(totalBeats, Math.ceil((scrollLeft + containerWidth) / beatWidth) + OVERSCAN_BEATS);
+
+      return {
+        startBeat,
+        endBeat,
+        containerWidth,
+        contentWidth,
+        beatWidth,
+        scrollLeft,
+      };
+    };
+
+    const update = () => {
+      frame = 0;
+      const next = computeViewport();
+      if (!next) return;
+
+      setViewport((prev) => {
+        if (
+          prev &&
+          prev.startBeat === next.startBeat &&
+          prev.endBeat === next.endBeat &&
+          prev.containerWidth === next.containerWidth &&
+          prev.contentWidth === next.contentWidth
+        ) {
+          return prev;
+        }
+        return next;
+      });
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+
+    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+    const resizeObserver = new ResizeObserver(() => update());
+    resizeObserver.observe(scrollContainer);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+    };
+  }, [scrollContainerRef, totalBeats, timelineZoom]);
+
+  return viewport;
+}
 
 interface ProducerTimelineProps {
   tracks: Track[];
@@ -12,6 +96,7 @@ interface ProducerTimelineProps {
   totalBeats: number;
   timelineZoom: number;
   timelineRef: RefObject<HTMLDivElement | null>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
   playheadRef: RefObject<HTMLDivElement | null>;
   onScrubStart: (event: ReactPointerEvent) => void;
   onClipPointerDown: (event: ReactPointerEvent, clipId: string, type: 'move' | 'resize') => void;
@@ -30,6 +115,7 @@ export function ProducerTimeline({
   totalBeats,
   timelineZoom,
   timelineRef,
+  scrollContainerRef,
   playheadRef,
   onScrubStart,
   onClipPointerDown,
@@ -40,6 +126,10 @@ export function ProducerTimeline({
   onAddTrack,
   onResizeTrack,
 }: ProducerTimelineProps) {
+  const viewport = useTimelineViewport(scrollContainerRef, totalBeats, timelineZoom);
+  const visibleStartBeat = viewport?.startBeat ?? 0;
+  const visibleEndBeat = viewport?.endBeat ?? totalBeats;
+
   const clipsByTrack = useMemo(() => {
     const map = new Map<number, Clip[]>();
     for (const clip of clips) {
@@ -52,9 +142,19 @@ export function ProducerTimeline({
   }, [clips]);
 
   return (
-    <div className="flex-1 overflow-auto relative flex flex-col bg-zinc-100 dark:bg-zinc-950" id="scroll-container">
+    <div
+      className="flex-1 overflow-auto relative flex flex-col bg-zinc-100 dark:bg-zinc-950"
+      id="scroll-container"
+      ref={scrollContainerRef}
+    >
       <div style={{ width: `${(totalBeats / 32) * timelineZoom * 100}%` }} className="flex flex-col relative h-full shrink-0">
-        <TimelineRuler totalBeats={totalBeats} playheadRef={playheadRef} onScrubStart={onScrubStart} />
+        <TimelineRuler
+          totalBeats={totalBeats}
+          playheadRef={playheadRef}
+          onScrubStart={onScrubStart}
+          visibleStartBeat={visibleStartBeat}
+          visibleEndBeat={visibleEndBeat}
+        />
 
         <div className="flex-1 flex flex-col relative" id="tracks-container" ref={timelineRef}>
           {/* Global Grid Overlay for Performance */}
@@ -76,6 +176,8 @@ export function ProducerTimeline({
               track={track}
               clips={clipsByTrack.get(track.id) || []}
               totalBeats={totalBeats}
+              visibleStartBeat={visibleStartBeat}
+              visibleEndBeat={visibleEndBeat}
               selectedClipId={selectedClipId}
               onToggleMute={onToggleMute}
               onSetTrackVolume={onSetTrackVolume}

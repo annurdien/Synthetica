@@ -5,14 +5,30 @@ interface TimelineRulerProps {
   totalBeats: number;
   playheadRef: RefObject<HTMLDivElement | null>;
   onScrubStart: (event: ReactPointerEvent) => void;
+  visibleStartBeat?: number;
+  visibleEndBeat?: number;
 }
 
-export function TimelineRuler({ totalBeats, playheadRef, onScrubStart }: TimelineRulerProps) {
+export function TimelineRuler({
+  totalBeats,
+  playheadRef,
+  onScrubStart,
+  visibleStartBeat = 0,
+  visibleEndBeat = totalBeats,
+}: TimelineRulerProps) {
+  const startBeat = Math.max(0, Math.floor(visibleStartBeat));
+  const endBeat = Math.min(totalBeats, Math.ceil(visibleEndBeat));
+  const beats: number[] = [];
+
+  for (let i = startBeat; i < endBeat; i += 1) {
+    beats.push(i);
+  }
+
   return (
     <div className="flex h-8 bg-zinc-50 dark:bg-zinc-900 border-b border-black/5 dark:border-white/10 sticky top-0 z-40 shrink-0 cursor-ew-resize" onPointerDown={onScrubStart}>
       <div className="w-40 border-r border-black/5 dark:border-white/10 shrink-0 bg-zinc-50 dark:bg-zinc-900 pointer-events-none sticky left-0 z-50"></div>
       <div className="flex-1 relative pointer-events-auto" id="timeline-ruler">
-        {Array.from({ length: totalBeats }).map((_, i) => (
+        {beats.map((i) => (
           <div
             key={i}
             className={`absolute top-0 bottom-0 border-l ${i % 4 === 0 ? 'border-zinc-400 dark:border-zinc-500 h-full' : 'border-black/5 dark:border-white/10 h-1/2'} text-[10px] text-zinc-400 pl-1 pt-1 font-mono pointer-events-none select-none`}

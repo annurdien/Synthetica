@@ -10,51 +10,51 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-mot
 const STEPS = [
   {
     id: 1,
-    math: 'Pitch is set by 261.63 (C4). Loudness is the final multiplier. The exponential term shapes the note into a short beat-sized envelope.',
-    controls: ['Pitch: 261.63', 'Envelope: exp(-6 * (beat mod 1))', 'Volume: 0.35'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot t) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.35',
+    math: "Sound is just a vibrating wave. The 'sin' function is our fundamental building block. It creates a smooth wiggle that oscillates between 1 and -1.",
+    controls: ['Time: t', 'Function: sin(t)', 'State: Inaudible'],
+    equation: '\\sin(t)',
   },
   {
     id: 2,
-    math: 'We multiply the base pitch by 1.05946^2 to move up two semitones. Everything else stays the same.',
-    controls: ['Semitones: 1.05946^2', 'Envelope: exp(-6 * (beat mod 1))', 'Volume: 0.35'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{2} \\cdot t) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.35',
+    math: "To hear a pitch, we need fast vibrations. We use 2 * pi to make the wave repeat every second, then multiply by 261.63 (Middle C) to set the frequency.",
+    controls: ['Cycle: 2 * pi', 'Frequency: 261.63 Hz', 'Note: Middle C'],
+    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot t)',
   },
   {
     id: 3,
-    math: 'A second sine wave wiggles the pitch. Depth controls how wide the wobble is, and rate controls how fast it moves.',
-    controls: ['Vibrato depth: 0.4', 'Vibrato rate: 5', 'Envelope: exp(-6 * (beat mod 1))'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{4} \\cdot t + 0.4 \\cdot \\sin(2 \\cdot \\pi \\cdot 5 \\cdot t)) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.33',
+    math: "The wave's height is its 'Amplitude'. Multiplying by 0.3 makes the wave smaller, which we perceive as a lower volume (30% power).",
+    controls: ['Volume: 0.3', 'Peak: 1.0 -> 0.3', 'Scale: Linear'],
+    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot t) \\cdot 0.3',
   },
   {
     id: 4,
-    math: 'Two sine waves are stacked: the main pitch and an octave above at 2x frequency. Their volumes blend the timbre.',
-    controls: ['Main volume: 0.28', 'Octave volume: 0.12', 'Envelope: exp(-5 * (beat mod 1))'],
-    equation: '(\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{5} \\cdot t) \\cdot 0.28 + \\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{5} \\cdot 2 \\cdot t) \\cdot 0.12) \\cdot \\exp(-5 \\cdot (beat \\bmod 1))',
+    math: "Static tones are boring. We use 'beat' and 'exp' to create an 'Envelope'. This makes the volume spike at the start of every beat and fade away.",
+    controls: ['Decay: exp(-6 * x)', 'Rhythm: beat mod 1', 'Shape: Percussive'],
+    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot t) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.3',
   },
   {
     id: 5,
-    math: 'The pitch jumps to 7 semitones above Do. Multiplying beat by 2 shortens the envelope for faster pulses.',
-    controls: ['Semitones: 1.05946^7', 'Rhythm: beat * 2', 'Envelope: exp(-8 * ((beat * 2) mod 1))'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{7} \\cdot t) \\cdot \\exp(-8 \\cdot ((beat \\cdot 2) \\bmod 1)) \\cdot 0.3',
+    math: "Harmonics make sound rich. By adding a second wave at exactly twice the frequency (an octave), we change the 'Timbre' or texture of the sound.",
+    controls: ['Fundamental: 261.63', 'Octave: * 2', 'Blend: 0.2 + 0.1'],
+    equation: '(\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot t) \\cdot 0.2 + \\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 2 \\cdot t) \\cdot 0.1) \\cdot \\exp(-5 \\cdot (beat \\bmod 1))',
   },
   {
     id: 6,
-    math: 'Two layers: a lead at 9 semitones above Do, plus a low bass at 110 Hz. Each has its own envelope and volume.',
-    controls: ['Lead pitch: 1.05946^9', 'Bass pitch: 110', 'Bass volume: 0.12'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{9} \\cdot t) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.28 + \\sin(2 \\cdot \\pi \\cdot 110 \\cdot t) \\cdot \\exp(-3 \\cdot (beat \\bmod 1)) \\cdot 0.12',
+    math: "We can 'program' melodies using arrays. The floor function keeps us on one note for a set duration before jumping to the next index in the list.",
+    controls: ['Scale: [0, 4, 7]', 'Intervals: Major Triad', 'Logic: floor(beat)'],
+    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{[0,4,7][\\floor(beat) \\bmod 3]} \\cdot t) \\cdot \\exp(-6 \\cdot (beat \\bmod 1)) \\cdot 0.3',
   },
   {
     id: 7,
-    math: 'The pitch is 11 semitones above Do. A faster decay makes it feel tight and unresolved.',
-    controls: ['Semitones: 1.05946^11', 'Decay: exp(-10 * (beat mod 1))', 'Volume: 0.3'],
-    equation: '\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{11} \\cdot t) \\cdot \\exp(-10 \\cdot (beat \\bmod 1)) \\cdot 0.3',
+    math: "Percussion comes from chaos. The 'random' function produces white noise. With a very sharp envelope, it sounds like a hi-hat or a snare.",
+    controls: ['Noise: random()', 'Attack: Immediate', 'Decay: exp(-40 * x)'],
+    equation: '(\\text{random}() \\cdot 2 - 1) \\cdot \\exp(-40 \\cdot (beat \\bmod 1)) \\cdot 0.08',
   },
   {
     id: 8,
-    math: 'The melody steps through a scale array while bass and noise add body and rhythm.',
-    controls: ['Scale: [0,2,4,5,7,9,11,12]', 'Melody speed: beat * 2', 'Hi-hat: random()'],
-    equation: '(\\sin(2 \\cdot \\pi \\cdot 65.41 \\cdot t) \\cdot \\exp(-2 \\cdot (beat \\bmod 1)) \\cdot 0.22) + (\\sin(2 \\cdot \\pi \\cdot 130.81 \\cdot t) \\cdot \\exp(-2 \\cdot (beat \\bmod 1)) \\cdot 0.12) + (\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{[0,2,4,5,7,9,11,12][\\floor(beat \\cdot 2) \\bmod 8]} \\cdot t) \\cdot \\exp(-6 \\cdot ((beat \\cdot 2) \\bmod 1)) \\cdot 0.25) + ((\\text{random}() \\cdot 2 - 1) \\cdot \\exp(-32 \\cdot ((beat \\cdot 4) \\bmod 1)) \\cdot 0.05)',
+    math: "Combining everything: a sub-bass, a mid-range melody, and high-frequency noise creates a full generative composition using only math.",
+    controls: ['Bass: 65.41 Hz', 'Melody: Scale Array', 'Percussion: Noise'],
+    equation: '(\\sin(2 \\cdot \\pi \\cdot 65.41 \\cdot t) \\cdot \\exp(-2 \\cdot (beat \\bmod 1)) \\cdot 0.22) + (\\sin(2 \\cdot \\pi \\cdot 261.63 \\cdot 1.05946^{[0,2,4,5,7,9,11,12][\\floor(beat \\cdot 2) \\bmod 8]} \\cdot t) \\cdot \\exp(-6 \\cdot ((beat \\cdot 2) \\bmod 1)) \\cdot 0.2) + ((\\text{random}() \\cdot 2 - 1) \\cdot \\exp(-32 \\cdot ((beat \\cdot 4) \\bmod 1)) \\cdot 0.05)',
   }
 ];
 
@@ -227,7 +227,7 @@ export default function TutorialPage() {
                 className="flex flex-col items-center w-full min-w-0 my-auto" 
                 style={{ opacity: contentOpacity, y: inverseYOffset }}
               >
-                <div className="tutorial-math-editor w-full overflow-x-auto overflow-y-hidden pb-6 custom-scrollbar max-w-full">
+                <div className="tutorial-math-editor w-full overflow-x-auto overflow-y-hidden pb-3 custom-scrollbar max-w-full">
                   <MathEditor value={latexEquation} onChange={setLatexEquation} onJsChange={setEquationJs} />
                 </div>
                 <p className="mt-4 text-[10px] uppercase tracking-widest text-zinc-500 font-mono text-center">
@@ -288,21 +288,24 @@ export default function TutorialPage() {
           }
           /* Custom horizontal scrollbar for long equations */
           .custom-scrollbar::-webkit-scrollbar {
-            height: 6px;
+            height: 10px;
           }
           .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
           }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+          }
           .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+            background-clip: padding-box;
           }
         `}</style>
       </div>
     </div>
   );
-}
 

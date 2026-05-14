@@ -44,7 +44,19 @@ const MathEditorInner = ({
   }, [mq, value]);
 
   return (
-    <div style={{ width: '100%', fontSize: '1.5rem', background: 'transparent', border: 'none', display: 'flex', alignItems: 'center' }}>
+    <div 
+      style={{ 
+        width: 'max-content',
+        minWidth: '100%', 
+        fontSize: '1.5rem', 
+        background: 'transparent', 
+        border: 'none', 
+        display: 'flex', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '4rem'
+      }}
+    >
       <MathQuillEditor
         latex={value}
         onChange={(mathField) => {

@@ -60,70 +60,72 @@ export const PRESETS: Preset[] = [
 
 export const PROJECT_PRESETS: ProjectPreset[] = [
   {
-    name: 'Rainy Day Tape (Lo-Fi)',
-    bpm: 82,
+    name: 'Neon Expressway (Synthwave)',
+    bpm: 118,
     clips: [
-      // Atmosphere - full song vinyl crackle
+      // Arp - full song
       {
-        id: 'rd_vinyl', trackId: 0, startBeat: 0, lengthBeats: 64,
-        equation: '(random()*2-1)*0.04 + (random()*2-1)*exp(-50*((beat*8+0.3)%1))*0.06',
-        name: 'Vinyl Dust', color: '#64748b'
+        id: 'ne_arp', trackId: 0, startBeat: 0, lengthBeats: 64,
+        equation: 'sin(2*PI*(220*pow(1.05946,([0,-5,3,-2][floor(beat/8)%4])+([0,7,12,7,0,7,15,12][floor(beat*4)%8])))*t) * exp(-5*((beat*4)%1)) * 0.18',
+        name: 'Neon Arp', color: '#8b5cf6'
       },
-      // Keys - intro solo then full song
+      // Pad - builds in
       {
-        id: 'rd_keys1', trackId: 1, startBeat: 0, lengthBeats: 16,
-        equation: '(sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t+(0.4+2.5*exp(-5*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t)) + 0.5*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t)) * exp(-2*((beat*2)%1)) * ([1,0,0.5,0, 0.7,0,0.3,0][floor(beat*2)%8]) * 0.18',
-        name: 'Dusty Rhodes', color: '#3b82f6'
+        id: 'ne_pad', trackId: 1, startBeat: 16, lengthBeats: 48,
+        equation: '(sin(2*PI*(110*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t) + sin(2*PI*(110*pow(1.05946,[7,2,10,5][floor(beat/8)%4]))*t) + sin(2*PI*(110*pow(1.05946,[12,7,15,10][floor(beat/8)%4]))*t)) * 0.06 * (0.4+0.6*min(1,(beat%8)/3))',
+        name: 'Warm Pad', color: '#ec4899'
       },
+      // Bass
       {
-        id: 'rd_keys2', trackId: 1, startBeat: 16, lengthBeats: 48,
-        equation: '(sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t+(0.4+2.5*exp(-5*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t)) + 0.5*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t)) * exp(-2*((beat*2)%1)) * ([1,0,0.5,0, 0.7,0,0.3,0][floor(beat*2)%8]) * 0.18',
-        name: 'Dusty Rhodes', color: '#3b82f6'
+        id: 'ne_bass', trackId: 2, startBeat: 16, lengthBeats: 48,
+        equation: 'sin(2*PI*(55*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t + 2.5*exp(-4*((beat*4)%1))*sin(2*PI*(55*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t)) * exp(-2*((beat*4)%1)) * 0.4',
+        name: 'Synthwave Bass', color: '#f59e0b'
       },
-      // Bass enters at verse
+      // Kick
       {
-        id: 'rd_bass', trackId: 2, startBeat: 16, lengthBeats: 32,
-        equation: 'sin(2*PI*(27.5*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t) * exp(-1.5*((beat*2)%1)) * ([1,0,0,0, 1,0.5,0,0][floor(beat*2)%8]) * 0.5',
-        name: 'Warm Sub', color: '#8b5cf6'
+        id: 'ne_kick', trackId: 3, startBeat: 16, lengthBeats: 48,
+        equation: 'sin(2*PI*(50*t - 4*exp(-25*(beat%1)))) * exp(-10*(beat%1)) * 0.85',
+        name: 'Retro Kick', color: '#ef4444'
       },
-      // Kick enters at verse
+      // Snare
       {
-        id: 'rd_kick', trackId: 3, startBeat: 16, lengthBeats: 32,
-        equation: 'sin(2*PI*(40*t - 3*exp(-20*(beat%1)))) * exp(-12*(beat%1)) * 0.75',
-        name: 'Muffled Kick', color: '#ef4444'
+        id: 'ne_snare', trackId: 4, startBeat: 16, lengthBeats: 48,
+        equation: '((random()*2-1)*0.6 + sin(2*PI*200*t)*0.3) * exp(-25*((beat+1)%2)) * 0.45',
+        name: 'Gated Snare', color: '#f97316'
       },
-      // Rimshot on 2 and 4
+      // Hats
       {
-        id: 'rd_rim', trackId: 4, startBeat: 16, lengthBeats: 32,
-        equation: '((random()*2-1)*0.3 + sin(2*PI*380*t)*0.5) * exp(-40*((beat+1)%2)) * 0.35',
-        name: 'Rimshot', color: '#f97316'
+        id: 'ne_hats', trackId: 5, startBeat: 16, lengthBeats: 48,
+        equation: '(random()*2-1) * exp(-40*((beat*4)%1)) * ([0.3,0.08,0.4,0.08, 0.3,0.08,0.5,0.12][floor(beat*4)%8]) * 0.18',
+        name: '16th Hats', color: '#10b981'
       },
-      // Hats - verse through outro
+      // Lead melody - chorus only
       {
-        id: 'rd_hats', trackId: 5, startBeat: 16, lengthBeats: 48,
-        equation: '(random()*2-1) * exp(-35*((beat*2)%1)) * ([0.12,0.05,0.15,0.04][floor(beat*4)%4]) * 0.2',
-        name: 'Lazy Hats', color: '#10b981'
+        id: 'ne_lead', trackId: 6, startBeat: 32, lengthBeats: 32,
+        equation: '(sin(2*PI*(440*pow(1.05946,[12,12,10,12, 15,15,14,10, 12,15,19,17, 15,12,10,7][floor(beat*2)%16]))*t) + 0.3*sin(2*PI*(440*pow(1.05946,[12,12,10,12, 15,15,14,10, 12,15,19,17, 15,12,10,7][floor(beat*2)%16]))*t*1.005)) * exp(-2*((beat*2)%1)) * 0.22',
+        name: 'Hero Lead', color: '#06b6d4'
       },
-      // Lead melody enters at chorus
+      // Clap layers
       {
-        id: 'rd_lead', trackId: 6, startBeat: 32, lengthBeats: 32,
-        equation: 'sin(2*PI*(220*pow(1.05946,[5,9,7,5, 3,0,-1,3, 5,7,9,12, 10,7,5,3][floor(beat)%16]))*t + 0.12*sin(2*PI*5*t)) * exp(-3*(beat%1)) * 0.2',
-        name: 'Mellow Flute', color: '#f59e0b'
+        id: 'ne_clap', trackId: 7, startBeat: 32, lengthBeats: 32,
+        equation: '(random()*2-1) * exp(-35*((beat+1)%2)) * 0.3',
+        name: 'Layered Clap', color: '#a855f7'
       },
     ],
     tracks: [
-      { id: 0, name: 'Atmosphere', muted: false, height: 80, volume: 1 },
-      { id: 1, name: 'Rhodes Keys', muted: false, height: 80, volume: 1 },
-      { id: 2, name: 'Sub Bass', muted: false, height: 80, volume: 1 },
+      { id: 0, name: 'Arpeggiator', muted: false, height: 80, volume: 1 },
+      { id: 1, name: 'Synth Pad', muted: false, height: 80, volume: 1 },
+      { id: 2, name: 'Bass', muted: false, height: 80, volume: 1 },
       { id: 3, name: 'Kick', muted: false, height: 80, volume: 1 },
-      { id: 4, name: 'Rimshot', muted: false, height: 80, volume: 1 },
+      { id: 4, name: 'Snare', muted: false, height: 80, volume: 1 },
       { id: 5, name: 'Hi-Hats', muted: false, height: 80, volume: 1 },
-      { id: 6, name: 'Lead Melody', muted: false, height: 80, volume: 1 },
+      { id: 6, name: 'Lead Synth', muted: false, height: 80, volume: 1 },
+      { id: 7, name: 'Clap', muted: false, height: 80, volume: 1 },
     ],
   },
   {
     name: 'Day One - Interstellar Main Theme',
-    bpm: 63,
+    bpm: 80,
     clips: [
       {
         id: 'do_note_0',
@@ -4582,67 +4584,65 @@ export const PROJECT_PRESETS: ProjectPreset[] = [
     ]
   },
   {
-    name: 'Neon Expressway (Synthwave)',
-    bpm: 118,
+    name: 'Rainy Day Tape (Lo-Fi)',
+    bpm: 82,
     clips: [
-      // Arp - full song
+      // Atmosphere - full song vinyl crackle
       {
-        id: 'ne_arp', trackId: 0, startBeat: 0, lengthBeats: 64,
-        equation: 'sin(2*PI*(220*pow(1.05946,([0,-5,3,-2][floor(beat/8)%4])+([0,7,12,7,0,7,15,12][floor(beat*4)%8])))*t) * exp(-5*((beat*4)%1)) * 0.18',
-        name: 'Neon Arp', color: '#8b5cf6'
+        id: 'rd_vinyl', trackId: 0, startBeat: 0, lengthBeats: 64,
+        equation: '(random()*2-1)*0.04 + (random()*2-1)*exp(-50*((beat*8+0.3)%1))*0.06',
+        name: 'Vinyl Dust', color: '#64748b'
       },
-      // Pad - builds in
+      // Keys - intro solo then full song
       {
-        id: 'ne_pad', trackId: 1, startBeat: 16, lengthBeats: 48,
-        equation: '(sin(2*PI*(110*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t) + sin(2*PI*(110*pow(1.05946,[7,2,10,5][floor(beat/8)%4]))*t) + sin(2*PI*(110*pow(1.05946,[12,7,15,10][floor(beat/8)%4]))*t)) * 0.06 * (0.4+0.6*min(1,(beat%8)/3))',
-        name: 'Warm Pad', color: '#ec4899'
+        id: 'rd_keys1', trackId: 1, startBeat: 0, lengthBeats: 16,
+        equation: '(sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t+(0.4+2.5*exp(-5*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t)) + 0.5*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t)) * exp(-2*((beat*2)%1)) * ([1,0,0.5,0, 0.7,0,0.3,0][floor(beat*2)%8]) * 0.18',
+        name: 'Dusty Rhodes', color: '#3b82f6'
       },
-      // Bass
       {
-        id: 'ne_bass', trackId: 2, startBeat: 16, lengthBeats: 48,
-        equation: 'sin(2*PI*(55*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t + 2.5*exp(-4*((beat*4)%1))*sin(2*PI*(55*pow(1.05946,[0,-5,3,-2][floor(beat/8)%4]))*t)) * exp(-2*((beat*4)%1)) * 0.4',
-        name: 'Synthwave Bass', color: '#f59e0b'
+        id: 'rd_keys2', trackId: 1, startBeat: 16, lengthBeats: 48,
+        equation: '(sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t+(0.4+2.5*exp(-5*((beat*2)%1)))*sin(2*PI*(220*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t)) + 0.5*sin(2*PI*(220*pow(1.05946,[8,14,7,3][floor(beat/4)%4]))*t)) * exp(-2*((beat*2)%1)) * ([1,0,0.5,0, 0.7,0,0.3,0][floor(beat*2)%8]) * 0.18',
+        name: 'Dusty Rhodes', color: '#3b82f6'
       },
-      // Kick
+      // Bass enters at verse
       {
-        id: 'ne_kick', trackId: 3, startBeat: 16, lengthBeats: 48,
-        equation: 'sin(2*PI*(50*t - 4*exp(-25*(beat%1)))) * exp(-10*(beat%1)) * 0.85',
-        name: 'Retro Kick', color: '#ef4444'
+        id: 'rd_bass', trackId: 2, startBeat: 16, lengthBeats: 32,
+        equation: 'sin(2*PI*(27.5*pow(1.05946,[5,10,3,0][floor(beat/4)%4]))*t) * exp(-1.5*((beat*2)%1)) * ([1,0,0,0, 1,0.5,0,0][floor(beat*2)%8]) * 0.5',
+        name: 'Warm Sub', color: '#8b5cf6'
       },
-      // Snare
+      // Kick enters at verse
       {
-        id: 'ne_snare', trackId: 4, startBeat: 16, lengthBeats: 48,
-        equation: '((random()*2-1)*0.6 + sin(2*PI*200*t)*0.3) * exp(-25*((beat+1)%2)) * 0.45',
-        name: 'Gated Snare', color: '#f97316'
+        id: 'rd_kick', trackId: 3, startBeat: 16, lengthBeats: 32,
+        equation: 'sin(2*PI*(40*t - 3*exp(-20*(beat%1)))) * exp(-12*(beat%1)) * 0.75',
+        name: 'Muffled Kick', color: '#ef4444'
       },
-      // Hats
+      // Rimshot on 2 and 4
       {
-        id: 'ne_hats', trackId: 5, startBeat: 16, lengthBeats: 48,
-        equation: '(random()*2-1) * exp(-40*((beat*4)%1)) * ([0.3,0.08,0.4,0.08, 0.3,0.08,0.5,0.12][floor(beat*4)%8]) * 0.18',
-        name: '16th Hats', color: '#10b981'
+        id: 'rd_rim', trackId: 4, startBeat: 16, lengthBeats: 32,
+        equation: '((random()*2-1)*0.3 + sin(2*PI*380*t)*0.5) * exp(-40*((beat+1)%2)) * 0.35',
+        name: 'Rimshot', color: '#f97316'
       },
-      // Lead melody - chorus only
+      // Hats - verse through outro
       {
-        id: 'ne_lead', trackId: 6, startBeat: 32, lengthBeats: 32,
-        equation: '(sin(2*PI*(440*pow(1.05946,[12,12,10,12, 15,15,14,10, 12,15,19,17, 15,12,10,7][floor(beat*2)%16]))*t) + 0.3*sin(2*PI*(440*pow(1.05946,[12,12,10,12, 15,15,14,10, 12,15,19,17, 15,12,10,7][floor(beat*2)%16]))*t*1.005)) * exp(-2*((beat*2)%1)) * 0.22',
-        name: 'Hero Lead', color: '#06b6d4'
+        id: 'rd_hats', trackId: 5, startBeat: 16, lengthBeats: 48,
+        equation: '(random()*2-1) * exp(-35*((beat*2)%1)) * ([0.12,0.05,0.15,0.04][floor(beat*4)%4]) * 0.2',
+        name: 'Lazy Hats', color: '#10b981'
       },
-      // Clap layers
+      // Lead melody enters at chorus
       {
-        id: 'ne_clap', trackId: 7, startBeat: 32, lengthBeats: 32,
-        equation: '(random()*2-1) * exp(-35*((beat+1)%2)) * 0.3',
-        name: 'Layered Clap', color: '#a855f7'
+        id: 'rd_lead', trackId: 6, startBeat: 32, lengthBeats: 32,
+        equation: 'sin(2*PI*(220*pow(1.05946,[5,9,7,5, 3,0,-1,3, 5,7,9,12, 10,7,5,3][floor(beat)%16]))*t + 0.12*sin(2*PI*5*t)) * exp(-3*(beat%1)) * 0.2',
+        name: 'Mellow Flute', color: '#f59e0b'
       },
     ],
     tracks: [
-      { id: 0, name: 'Arpeggiator', muted: false, height: 80, volume: 1 },
-      { id: 1, name: 'Synth Pad', muted: false, height: 80, volume: 1 },
-      { id: 2, name: 'Bass', muted: false, height: 80, volume: 1 },
+      { id: 0, name: 'Atmosphere', muted: false, height: 80, volume: 1 },
+      { id: 1, name: 'Rhodes Keys', muted: false, height: 80, volume: 1 },
+      { id: 2, name: 'Sub Bass', muted: false, height: 80, volume: 1 },
       { id: 3, name: 'Kick', muted: false, height: 80, volume: 1 },
-      { id: 4, name: 'Snare', muted: false, height: 80, volume: 1 },
+      { id: 4, name: 'Rimshot', muted: false, height: 80, volume: 1 },
       { id: 5, name: 'Hi-Hats', muted: false, height: 80, volume: 1 },
-      { id: 6, name: 'Lead Synth', muted: false, height: 80, volume: 1 },
-      { id: 7, name: 'Clap', muted: false, height: 80, volume: 1 },
+      { id: 6, name: 'Lead Melody', muted: false, height: 80, volume: 1 },
     ],
   },
   {

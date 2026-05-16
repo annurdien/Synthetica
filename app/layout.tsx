@@ -20,7 +20,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: 'Synthetica',
-  description: 'The first Digital Audio Workstation powered entirely by mathematical vibrations and natural language synthesis.',
+  description: 'The first Digital Audio Workstation powered entirely by mathematical vibrations and equation-based synthesis.',
   icons: {
     icon: '/icon.png',
   },

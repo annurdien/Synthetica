@@ -1,12 +1,13 @@
 'use client';
-import { type RefObject } from 'react';
 import { 
   Play, 
   Rewind, 
   Square, 
   ZoomIn, 
   ZoomOut,
-  Clock
+  Clock,
+  Plus,
+  Save
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -20,6 +21,8 @@ interface TransportBarProps {
   onZoomIn: () => void;
   onShowLibrary: () => void;
   onShowEditor: () => void;
+  onNewProject: () => void;
+  onSaveProject: () => void;
   timerRef?: RefObject<HTMLSpanElement | null>;
 }
 
@@ -33,10 +36,30 @@ export function TransportBar({
   onZoomIn,
   onShowLibrary,
   onShowEditor,
+  onNewProject,
+  onSaveProject,
   timerRef,
 }: TransportBarProps) {
   return (
     <div className="h-16 border-b border-black/5 dark:border-white/10 flex items-center px-6 gap-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-3xl shrink-0 z-10 relative transition-all duration-500">
+      {/* Project Actions Group */}
+      <div className="flex items-center gap-2 pr-6 border-r border-black/5 dark:border-white/5">
+        <button
+          onClick={onNewProject}
+          className="w-10 h-10 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300"
+          title="New Project"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onSaveProject}
+          className="w-10 h-10 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300"
+          title="Save Project"
+        >
+          <Save className="w-4 h-4" />
+        </button>
+      </div>
+
       {/* Main Playback Controls */}
       <div className="flex-1 flex items-center justify-center gap-4">
         <button

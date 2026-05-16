@@ -2,7 +2,6 @@
 import { Activity, Volume2 } from 'lucide-react';
 import { ThemeToggle } from '@/app/components/ThemeToggle';
 import type { ActiveTab } from '@/app/lib/types';
-import { motion } from 'framer-motion';
 
 interface AppHeaderProps {
   activeTab: ActiveTab;

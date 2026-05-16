@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as Tone from 'tone';
 import { AppHeader } from '@/app/components/AppHeader';
 import { SynthEditorPanel } from '@/app/components/SynthEditorPanel';
@@ -54,6 +55,9 @@ export default function Page() {
   );
   const [saveName, setSaveName] = useState('');
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
+  const [projectSaveName, setProjectSaveName] = useState('');
+  const [isProjectSavePopupOpen, setIsProjectSavePopupOpen] = useState(false);
+  const [userProjects, setUserProjects] = useState<ProjectPreset[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLibraryVisible, setIsLibraryVisible] = useState(true);
   const [isSynthLibraryVisible, setIsSynthLibraryVisible] = useState(true);
@@ -105,6 +109,21 @@ export default function Page() {
   useEffect(() => {
     bpmRef.current = bpm;
   }, [bpm]);
+
+  useEffect(() => {
+    const savedProjects = localStorage.getItem('synthetica_user_projects');
+    if (savedProjects) {
+      try {
+        setUserProjects(JSON.parse(savedProjects));
+      } catch (e) {
+        console.error('Failed to parse saved projects', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('synthetica_user_projects', JSON.stringify(userProjects));
+  }, [userProjects]);
 
   useEffect(() => {
     activeTabRef.current = activeTab;
@@ -721,7 +740,7 @@ export default function Page() {
 
       const newClips = preset.clips.map((clip) => ({
         ...clip,
-        id: `${clip.id}-${Math.floor(Math.random() * 1000)}`,
+        id: clip.id.includes('-') ? clip.id : `${clip.id}-${Math.floor(Math.random() * 1000)}`,
       }));
 
       setClips(newClips);
@@ -729,6 +748,37 @@ export default function Page() {
     },
     [stopTimelineAndReset]
   );
+
+  const saveProject = useCallback(() => {
+    if (!projectSaveName.trim()) return;
+    const newProject: ProjectPreset = {
+      name: projectSaveName,
+      bpm,
+      tracks: [...tracks],
+      clips: [...clips],
+    };
+    setUserProjects((prev) => [...prev, newProject]);
+    setProjectSaveName('');
+    setIsProjectSavePopupOpen(false);
+  }, [bpm, clips, projectSaveName, tracks]);
+
+  const createNewProject = useCallback(async () => {
+    if (confirm('Are you sure you want to create a new project? Any unsaved changes will be lost.')) {
+      await stopTimelineAndReset();
+      setBpm(120);
+      setTracks([
+        { id: 0, name: 'Lead', muted: false, height: 80, volume: 1 },
+        { id: 1, name: 'Bass', muted: false, height: 80, volume: 1 },
+        { id: 2, name: 'Drums', muted: false, height: 80, volume: 1 },
+        { id: 3, name: 'Atmosphere', muted: false, height: 80, volume: 1 },
+      ]);
+      setClips([]);
+      setSelectedClipId(null);
+      setEquation(PRESETS[0].eq);
+    }
+  }, [stopTimelineAndReset]);
+
+  const allProjects = useMemo(() => [...PROJECT_PRESETS, ...userProjects], [userProjects]);
 
   const filteredLibrary = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -770,6 +820,8 @@ export default function Page() {
         onVolumeChange={setVolume}
         reverb={reverb}
         onReverbChange={setReverb}
+        onNewProject={createNewProject}
+        onSaveProject={() => setIsProjectSavePopupOpen(true)}
       />
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
@@ -832,7 +884,7 @@ export default function Page() {
               selectedClipEquation={selectedClip?.equation}
               onAddClip={addClip}
               onLoadProjectPreset={loadProjectPreset}
-              projectPresets={PROJECT_PRESETS}
+              projectPresets={allProjects}
               previewingClipId={previewingClipId}
               onTogglePreview={togglePreviewClip}
               onHide={() => setIsLibraryVisible(false)}
@@ -850,6 +902,8 @@ export default function Page() {
                 onZoomIn={() => setTimelineZoom((zoom) => Math.min(5, zoom + 0.25))}
                 onShowLibrary={() => setIsLibraryVisible(true)}
                 onShowEditor={() => setIsEditorVisible(true)}
+                onNewProject={createNewProject}
+                onSaveProject={() => setIsProjectSavePopupOpen(true)}
                 timerRef={timerRef}
               />
 
@@ -892,6 +946,47 @@ export default function Page() {
           </>
         )}
       </div>
+
+      {/* Project Save Popup */}
+      <AnimatePresence>
+        {isProjectSavePopupOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl p-8 shadow-2xl border border-black/5 dark:border-white/10"
+            >
+              <h3 className="text-xl font-bold mb-2">Save Project</h3>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">Give your project a name to save it to your library.</p>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Project Name"
+                value={projectSaveName}
+                onChange={(e) => setProjectSaveName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveProject()}
+                className="w-full bg-black/5 dark:bg-white/5 border-none rounded-2xl py-4 px-6 text-lg outline-none mb-6 placeholder:text-zinc-400"
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setIsProjectSavePopupOpen(false)}
+                  className="flex-1 py-4 rounded-2xl font-bold text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveProject}
+                  disabled={!projectSaveName.trim()}
+                  className="flex-1 py-4 rounded-2xl font-bold bg-black dark:bg-white text-white dark:text-black disabled:opacity-50 transition-all"
+                >
+                  Save Project
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

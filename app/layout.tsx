@@ -21,6 +21,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Synthetica - Math Audio Visualizer',
   description: 'Visualize and hear sound from mathematical functions and equations.',
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {

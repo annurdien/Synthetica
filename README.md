@@ -1,20 +1,60 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+  <img src="public/cover.png" width="100%" alt="Synthetica Banner" />
+
+  # SYNTHETICA
+  ### The Equation-Based Digital Audio Workstation
+
+  [Demo](https://synthecia-168810048178.us-central1.run.app) • [Vibe-Coding #JuaraVibeCoding](https://ai.studio)
 </div>
 
-# Run and deploy your AI Studio app
+---
 
-This contains everything you need to run your app locally.
+**Synthetica** is a professional-grade Digital Audio Workstation (DAW) where sound is not sampled, but solved. Built for the #JuaraVibeCoding event, it leverages mathematical functions to generate high-fidelity audio in real-time.
 
-View your app in AI Studio: https://ai.studio/apps/b6b50ac1-3e15-4c7f-b532-d669009de8f1
+## 🚀 Key Features
 
-## Run Locally
+- **Math-to-Sound Engine**: Write pure JavaScript math functions to generate complex waveforms.
+- **Producer Studio**: A multi-track timeline for arranging clips, complete with volume automation and master reverb.
+- **Project Persistence**: Save and load your compositions directly in the browser via LocalStorage.
+- **Vibe-Coding Integration**: Powered by Gemini API for natural language sound synthesis and orchestration.
 
-**Prerequisites:**  Node.js
+## 🛠 Tech Stack
 
+- **Core**: [Next.js 15](https://nextjs.org/) & [React 19](https://react.dev/)
+- **Audio Engine**: [Tone.js](https://tonejs.github.io/) & Custom Web Audio Worklets
+- **AI**: [Google Gemini API](https://ai.google.dev/)
+- **Infrastructure**: [Google Cloud Run](https://cloud.google.com/run) & [Docker](https://www.docker.com/)
 
+## 💻 Getting Started
+
+### Prerequisites
+- Node.js 20+
+- Google Cloud SDK (for deployment)
+
+### Local Development
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+2. Set your environment variables in `.env.local`:
+   ```bash
+   GEMINI_API_KEY=your_api_key_here
+   ```
+3. Run the development server:
+   ```bash
+   make dev
+   ```
+
+## 🚢 Deployment
+
+The project is optimized for **Google Cloud Run**. Use the included `Makefile` for automated deployment:
+
+```bash
+make deploy
+```
+
+---
+
+<div align="center">
+  Built with 🎹 and 📐 for #JuaraVibeCoding
+</div>

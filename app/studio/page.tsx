@@ -820,8 +820,6 @@ export default function Page() {
         onVolumeChange={setVolume}
         reverb={reverb}
         onReverbChange={setReverb}
-        onNewProject={createNewProject}
-        onSaveProject={() => setIsProjectSavePopupOpen(true)}
       />
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">

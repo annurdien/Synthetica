@@ -42,6 +42,11 @@ export const PRESETS: Preset[] = [
     bpm: 63,
   },
   {
+    name: 'Bronze Gamelan Ensemble',
+    eq: '((sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7][floor(beat*2)%8]))*t) + 0.75*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7][floor(beat*2)%8]))*1.42*t) + 0.55*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7][floor(beat*2)%8]))*1.88*t) + 0.35*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7][floor(beat*2)%8]))*2.57*t) + 0.22*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7][floor(beat*2)%8]))*3.7*t)) * exp(-3*(beat%1)) + 0.03*(random()*2-1)*exp(-70*(beat%1))) * 0.2',
+    bpm: 96,
+  },
+  {
     name: 'Tape Strings',
     eq: '(sin(2*PI*220*pow(1.05946,[0,5,3,-2][floor(beat/4)%4])*t+0.08*sin(2*PI*5.5*t)) + sin(2*PI*220*pow(1.05946,[7,12,10,5][floor(beat/4)%4])*t+0.08*sin(2*PI*5.2*t)) + sin(2*PI*220*pow(1.05946,[12,17,15,10][floor(beat/4)%4])*t+0.08*sin(2*PI*4.8*t))) * 0.07 * (0.4+0.6*min(1,(beat%4)/2))',
     bpm: 80,
@@ -4703,6 +4708,56 @@ export const PROJECT_PRESETS: ProjectPreset[] = [
     ],
   },
   {
+    name: 'Sacred Gamelan (Traditional)',
+    bpm: 96,
+    clips: [
+      // Gong ageng - marks every 16 beats (cycle)
+      {
+        id: 'ga_gong', trackId: 0, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*55*t) + 0.65*sin(2*PI*55*1.52*t) + 0.4*sin(2*PI*55*2.08*t) + 0.28*sin(2*PI*55*2.9*t) + 0.18*sin(2*PI*55*3.7*t)) * exp(-0.4*(beat%16)) + 0.03*(random()*2-1)*exp(-20*(beat%16))) * 0.8',
+        name: 'Gong Ageng', color: '#a16207'
+      },
+      // Kenong - punctuation every 4 beats
+      {
+        id: 'ga_kenong', trackId: 1, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*110*t) + 0.55*sin(2*PI*110*1.58*t) + 0.35*sin(2*PI*110*2.32*t) + 0.22*sin(2*PI*110*3.18*t)) * exp(-1.2*((beat+1)%4)) + 0.02*(random()*2-1)*exp(-40*((beat+1)%4))) * 0.45',
+        name: 'Kenong', color: '#d97706'
+      },
+      // Saron - core melody (Slendro approximation, slower 1 beat ringing)
+      {
+        id: 'ga_saron', trackId: 2, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7, 9,7,9,4, 2,0,2,4][floor(beat)%16]))*t) + 0.7*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7, 9,7,9,4, 2,0,2,4][floor(beat)%16]))*1.42*t) + 0.45*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7, 9,7,9,4, 2,0,2,4][floor(beat)%16]))*1.88*t) + 0.3*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7, 9,7,9,4, 2,0,2,4][floor(beat)%16]))*2.57*t) + 0.2*sin(2*PI*(220*pow(1.05946,[4,2,4,0, 4,2,4,7, 9,7,9,4, 2,0,2,4][floor(beat)%16]))*3.7*t)) * exp(-3*(beat%1)) + 0.03*(random()*2-1)*exp(-40*(beat%1))) * 0.25',
+        name: 'Saron Melody', color: '#10b981'
+      },
+      // Bonang - high sparkle, double speed interlocking (mipil)
+      {
+        id: 'ga_bonang', trackId: 3, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*(440*pow(1.05946,[4,2,4,2, 4,0,4,0, 4,2,4,2, 4,7,4,7, 9,7,9,7, 9,4,9,4, 2,0,2,0, 2,4,2,4][floor(beat*2)%32]))*t) + 0.6*sin(2*PI*(440*pow(1.05946,[4,2,4,2, 4,0,4,0, 4,2,4,2, 4,7,4,7, 9,7,9,7, 9,4,9,4, 2,0,2,0, 2,4,2,4][floor(beat*2)%32]))*1.5*t) + 0.4*sin(2*PI*(440*pow(1.05946,[4,2,4,2, 4,0,4,0, 4,2,4,2, 4,7,4,7, 9,7,9,7, 9,4,9,4, 2,0,2,0, 2,4,2,4][floor(beat*2)%32]))*1.92*t) + 0.25*sin(2*PI*(440*pow(1.05946,[4,2,4,2, 4,0,4,0, 4,2,4,2, 4,7,4,7, 9,7,9,7, 9,4,9,4, 2,0,2,0, 2,4,2,4][floor(beat*2)%32]))*2.68*t)) * exp(-6*((beat*2)%1)) + 0.02*(random()*2-1)*exp(-60*((beat*2)%1))) * 0.18',
+        name: 'Bonang', color: '#3b82f6'
+      },
+      // Kendang - hand drum
+      {
+        id: 'ga_kendang', trackId: 4, startBeat: 0, lengthBeats: 64,
+        equation: '(sin(2*PI*90*t) * exp(-15*(beat%1)) * 0.8 + (random()*2-1) * exp(-40*(beat%1)) * 0.4 + sin(2*PI*180*t) * exp(-25*(beat%1)) * 0.3) * ([1,0.2,0.6,0.2][floor(beat*2)%4]) * 0.45',
+        name: 'Kendang', color: '#ef4444'
+      },
+      // Kethuk - small metal pulse
+      {
+        id: 'ga_kethuk', trackId: 5, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*220*t) + 0.5*sin(2*PI*220*1.63*t) + 0.3*sin(2*PI*220*2.4*t)) * exp(-8*(beat%2)) + 0.02*(random()*2-1)*exp(-50*(beat%2))) * 0.35',
+        name: 'Kethuk', color: '#a855f7'
+      },
+    ],
+    tracks: [
+      { id: 0, name: 'Gong Ageng', muted: false, height: 80, volume: 1 },
+      { id: 1, name: 'Kenong', muted: false, height: 80, volume: 1 },
+      { id: 2, name: 'Saron', muted: false, height: 80, volume: 1 },
+      { id: 3, name: 'Bonang', muted: false, height: 80, volume: 1 },
+      { id: 4, name: 'Kendang', muted: false, height: 80, volume: 1 },
+      { id: 5, name: 'Kethuk', muted: false, height: 80, volume: 1 },
+    ],
+  },
+  {
     name: 'Solaris (Ambient)',
     bpm: 68,
     clips: [
@@ -4750,6 +4805,85 @@ export const PROJECT_PRESETS: ProjectPreset[] = [
       { id: 3, name: 'Sub Pulse', muted: false, height: 80, volume: 1 },
       { id: 4, name: 'Wind', muted: false, height: 80, volume: 1 },
       { id: 5, name: 'Shimmer', muted: false, height: 80, volume: 1 },
+    ],
+  },
+  {
+    name: 'Suwe Ora Jamu (Authentic Pelog Nem)',
+    bpm: 85,
+    clips: [
+      // Gong Ageng (Deep Anchor)
+      {
+        id: 'soj_gong', trackId: 0, startBeat: 0, lengthBeats: 64,
+        equation: '(sin(2*PI*41.2*t)+0.6*sin(2*PI*82.4*t))*exp(-0.1*(beat%16))*0.9',
+        name: 'Gong Ageng', color: '#a16207'
+      },
+      // Kenong (Punctuator)
+      {
+        id: 'soj_kenong', trackId: 1, startBeat: 0, lengthBeats: 64,
+        equation: 'sin(2*PI*110*pow(1.05946,[7,4,5,0][floor(beat/4)%4])*t)*exp(-1.5*(beat%4))*0.6',
+        name: 'Kenong', color: '#d97706'
+      },
+      // Saron Melody (Vocal Line with Overtones)
+      {
+        id: 'soj_saron', trackId: 2, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*220*pow(1.05946,[0,4,5,7,7,5,7,0,0,4,5,5,7,4,5,0,0,7,11,11,12,12,11,11,9,9,5,5,4,4,0,0][floor(beat*2)%32])*t)+0.4*sin(2*PI*220*pow(1.05946,[0,4,5,7,7,5,7,0,0,4,5,5,7,4,5,0,0,7,11,11,12,12,11,11,9,9,5,5,4,4,0,0][floor(beat*2)%32])*2.76*t))*exp(-2.2*((beat*2)%1))*[0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0][floor(beat*2)%32]*0.4)',
+        name: 'Saron Melody', color: '#10b981'
+      },
+      // Bonang Ompak (Interlocking pattern)
+      {
+        id: 'soj_bonang', trackId: 3, startBeat: 0, lengthBeats: 64,
+        equation: '(sin(2*PI*440*pow(1.05946,[0,5,0,7,0,5,0,7,0,4,0,5,0,7,0,5,0,7,0,11,0,12,0,11,0,9,0,5,0,4,0,0][floor(beat*2)%32])*t)*exp(-3*((beat*2)%1))*[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0][floor(beat*2)%32]*0.3)',
+        name: 'Bonang Ompak', color: '#3b82f6'
+      },
+      // Suling (Bamboo Flute)
+      {
+        id: 'soj_suling', trackId: 4, startBeat: 0, lengthBeats: 64,
+        equation: '(sin(2*PI*440*pow(1.05946,[0,4,5,7,7,5,7,0,0,4,5,5,7,4,5,0,0,7,11,11,12,12,11,11,9,9,5,5,4,4,0,0][floor(beat*2)%32])*t+0.1*sin(2*PI*6*t))*0.15)',
+        name: 'Suling', color: '#ec4899'
+      },
+      // Kendang (Drum rhythm)
+      {
+        id: 'soj_kendang', trackId: 5, startBeat: 0, lengthBeats: 64,
+        equation: '((sin(2*PI*(150-50*((beat*2)%1))*t)*[1,0,1,0][floor(beat*2)%4]+(random()*2-1)*exp(-40*((beat*2)%1))*[0,1,0,1][floor(beat*2)%4]))*exp(-8*((beat*2)%1))*0.5',
+        name: 'Kendang', color: '#ef4444'
+      }
+    ],
+    tracks: [
+      { id: 0, name: 'Gong', muted: false, height: 80, volume: 1 },
+      { id: 1, name: 'Kenong', muted: false, height: 80, volume: 1 },
+      { id: 2, name: 'Saron (Vocal)', muted: false, height: 80, volume: 1 },
+      { id: 3, name: 'Bonang (Ompak)', muted: false, height: 80, volume: 1 },
+      { id: 4, name: 'Suling (Flute)', muted: false, height: 80, volume: 1 },
+      { id: 5, name: 'Kendang', muted: false, height: 80, volume: 1 },
+    ],
+  },
+  {
+    name: 'IBM 7094 - Daisy Bell (1961)',
+    bpm: 80,
+    clips: [
+      // Authentic IBM 7094 Vocal Synthesis (Pulse + Inharmonic Resonances)
+      {
+        id: 'db_voice', trackId: 0, startBeat: 0, lengthBeats: 64,
+        equation: '((sign(sin(2*PI*261.63*pow(1.05946,[4,4,0,0,-5,-5,0,0,4,7,4,0,2,2,7,7,7,7,7,7,0,0,0,0,4,4,0,0,-5,-5,0,0,4,7,4,0,2,2,7,7,0,0,0,0][floor(beat*2)%44])*t+0.06*sin(2*PI*6*t)))+0.3*sin(2*PI*261.63*pow(1.05946,[4,4,0,0,-5,-5,0,0,4,7,4,0,2,2,7,7,7,7,7,7,0,0,0,0,4,4,0,0,-5,-5,0,0,4,7,4,0,2,2,7,7,0,0,0,0][floor(beat*2)%44])*3.14*t))*(1-exp(-100*((beat*2)%1)))*exp(-1.5*((beat*2)%1))*[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0][floor(beat*2)%44]*0.18)',
+        name: 'IBM 7094 Voice', color: '#60a5fa'
+      },
+      // Authentic 1961 Accompaniment (Simple Retro Bass)
+      {
+        id: 'db_bass', trackId: 1, startBeat: 0, lengthBeats: 64,
+        equation: 'sin(2*PI*130.81*pow(1.05946,[0,-5,0,-5, 0,-5,0,-5, -2,-7,-2,-7, 0,-5,0,-5][floor(beat/2)%16])*t) * exp(-5*(beat%1)) * 0.25',
+        name: 'Retro Bass', color: '#34d399'
+      },
+      // Digital Clock Noise (Aliasing simulation)
+      {
+        id: 'db_beep', trackId: 2, startBeat: 0, lengthBeats: 64,
+        equation: '((random()*2-1)*0.01 + sin(2*PI*880*t)*0.04) * exp(-20*((beat*4)%1)) * 0.1',
+        name: 'System Noise', color: '#94a3b8'
+      },
+    ],
+    tracks: [
+      { id: 0, name: 'Computer Voice', muted: false, height: 100, volume: 1 },
+      { id: 1, name: 'Bass Line', muted: false, height: 80, volume: 1 },
+      { id: 2, name: 'Background Noise', muted: false, height: 60, volume: 1 },
     ],
   },
 ];

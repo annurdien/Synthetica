@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google';
 import { ThemeProvider } from '@/app/components/ThemeProvider';
 import './globals.css'; // Global styles
@@ -19,14 +19,14 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Synthetica - Math Audio Visualizer',
-  description: 'Visualize and hear sound from mathematical functions and equations.',
+  title: 'Synthetica',
+  description: 'The first Digital Audio Workstation powered entirely by mathematical vibrations and natural language synthesis.',
   icons: {
     icon: '/icon.png',
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning className="font-sans antialiased text-zinc-900 bg-white dark:text-zinc-100 dark:bg-zinc-950 min-h-screen">

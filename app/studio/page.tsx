@@ -945,6 +945,47 @@ export default function Page() {
         )}
       </div>
 
+      {/* Synth Save Popup */}
+      <AnimatePresence>
+        {isSavePopupOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl p-8 shadow-2xl border border-black/5 dark:border-white/10"
+            >
+              <h3 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">Save Synth Preset</h3>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">Give your math equation a name to save it to your library.</p>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Synth Name (e.g. Acid Bass)"
+                value={saveName}
+                onChange={(e) => setSaveName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveToLibrary()}
+                className="w-full bg-black/5 dark:bg-white/5 border-none rounded-2xl py-4 px-6 text-lg outline-none mb-6 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setIsSavePopupOpen(false)}
+                  className="flex-1 py-4 rounded-2xl font-bold text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveToLibrary}
+                  disabled={!saveName.trim()}
+                  className="flex-1 py-4 rounded-2xl font-bold bg-black dark:bg-white text-white dark:text-black disabled:opacity-50 transition-all"
+                >
+                  Save Preset
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Project Save Popup */}
       <AnimatePresence>
         {isProjectSavePopupOpen && (
